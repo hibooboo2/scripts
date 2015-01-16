@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+echo Detecting tabs.
+grep -r --include=*.java --include=*.xml --include=*.properties '\t' ./ | tee tabResults.txt
+grep -rc --include=*.java --include=*.xml --include=*.properties '\t' ./ | grep -v ":0" | tee tabFileResults.txt
+LINECOUNT=$(cat tabResults.txt | wc -l)
+FILECOUNT=$(cat tabFileResults.txt | wc -l)
+rm tabResults.txt
+rm tabFileResults.txt
+
+if [ "$LINECOUNT" -ne "0" ]; then
+    echo There are $LINECOUNT Lines with tab in them.
+    echo There are $FILECOUNT Files with tab in them.
+    exit 1
+fi
+echo Done with detection.

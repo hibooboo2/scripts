@@ -1,0 +1,24 @@
+xcode-select --install
+touch ~/.profile # If you don't have it
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+brew doctor
+brew tap caskroom/homebrew-cask
+brew install brew-cask
+brew cask install virtualbox
+brew install coreutils
+brew install maven
+brew install liquibase
+brew install gnu-sed --with-default-names
+brew install boot2docker
+brew install mysql
+boot2docker init
+boot2docker up
+$(boot2docker shellinit)
+echo "export LIQUIBASE_HOME=$(find /usr/local/Cellar/liquibase -name libexec)" >> ~/.profile
+# Now make docker go in all new shells
+echo '$(boot2docker shellinit)' >> ~/.profile 
+docker run busybox # Prove it works!
+mysql.server start
+mysql -uroot # Prove it works!
+sudo easy_install pip
+sudo pip install tox # This gets your virtualenv too

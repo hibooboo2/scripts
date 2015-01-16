@@ -1,0 +1,24 @@
+#!/bin/sh
+
+#This is meant to be run on a new git repo with no commits to
+#post straight to github.
+
+if [ -z "$1" ];then
+    export repo_name=${PWD##*/}
+else
+    export repo_name=$1
+fi
+
+test -z $repo_name && echo "Repo name required." 1>&2 && exit 1
+
+#This assumes you have a auth token set to this $GITHUB_AUTHTOKEN
+echo $GITHUB_AUTHTOKEN
+curl -u $GITHUB_AUTHTOKEN:x-oauth-basic https://api.github.com/user/repos -d "{\"name\":\"$repo_name\"}" 
+
+git init
+echo ".*" > .gitignore
+echo "This will be your repo's readme" > README.md
+git add .
+git commit -m "Initial Commit"
+git remote add origin "git@github.com:$GITHUB_USERNAME/$repo_name.git"
+git push -u origin master

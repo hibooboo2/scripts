@@ -1,0 +1,2 @@
+rm -rf ~/sandbox
+mkdir ~/sandbox
