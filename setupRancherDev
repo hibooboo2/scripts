@@ -14,11 +14,13 @@ brew install mysql
 boot2docker init
 boot2docker up
 $(boot2docker shellinit)
-echo "export LIQUIBASE_HOME=$(find /usr/local/Cellar/liquibase -name libexec)" >> ~/.profile
 # Now make docker go in all new shells
-echo '$(boot2docker shellinit)' >> ~/.profile 
 docker run busybox # Prove it works!
 mysql.server start
-mysql -uroot # Prove it works!
+echo "Run mysql -uroot # if you want to test that mysql is running."
 sudo easy_install pip
 sudo pip install tox # This gets your virtualenv too
+
+# This will add stuff to .profile to ensure things work later.
+echo "export LIQUIBASE_HOME=$(find /usr/local/Cellar/liquibase -name libexec)" >> ~/.profile
+echo '$(boot2docker shellinit)' >> ~/.profile 

@@ -2,4 +2,3 @@ cd $CATTLE_ROOT
 git status
 git checkout master
 git fetch ranch
-

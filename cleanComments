@@ -1,0 +1,2 @@
+grep -v "#" $1 > $1.tmp
+echo -e "$(head -n 1 $1 | grep "#!")\n$(cat $1.tmp)" > $1.noComments
