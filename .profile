@@ -1,7 +1,18 @@
 export MYSCRIPTS="$HOME/scripts/"
 export PATH="${MYSCRIPTS}:${Build_Tools}:${PATH}"
 
-export PS1="\[\e[00;35m\]\u\[\e[0m\]\[\e[00;37m\]@\[\e[0m\]\[\e[00;36m\]\H\[\e[0m\]\[\e[00;37m\]\n[\[\e[0m\]\[\e[00;32m\]\w\[\e[0m\]\[\e[00;37m\]]\n\[\e[0m\]\[\e[00;33m\]\$?\[\e[0m\]\[\e[00;37m\] \[\e[0m\]\[\e[00;31m\] \[\`$(git rev-parse --abbrev-ref HEAD)\`\]  >\[\e[0m\]"
+function parse_git_branch(){
+    BRANCH=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
+    if [ ! "${BRANCH}" == "" ];then
+        echo "[${BRANCH}]"
+    else
+        echo ""
+    fi
+}
+
+PS1="[\[\e[32m\]\w\[\e[m\]]"
+PS1="$PS1\n\[\e[35m\]\u\[\e[m\]@\[\e[36m\]\H\[\e[m\]"
+export PS1="$PS1\n\[\e[33m\]$? \[\e[m\] \[\e[32m\] \`parse_git_branch\` \[\e[m\]\[\e[31m\]>\[\e[m\] "
 
 function br(){
     open -a /Applications/Brackets.app $1
