@@ -10,7 +10,7 @@ elif [ "${PWD}" == "${HOME}" ];then
 else
     repo_name=$1
 fi
-echo $repo_name
+
 test -z $repo_name && echo "Repo name required." 1>&2 && exit 1
 
 #This assumes you have a auth token set to this $GITHUB_AUTHTOKEN
