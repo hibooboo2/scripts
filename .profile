@@ -36,3 +36,5 @@ elif [ "$(uname)" == 'Freebsd' ]; then
 elif [ "$(uname)" == 'Darwin' ]; then
    alias ls='ls -GtAph'
 fi
+
+cd ~/sandbox
