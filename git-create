@@ -14,14 +14,20 @@ echo $repo_name
 test -z $repo_name && echo "Repo name required." 1>&2 && exit 1
 
 #This assumes you have a auth token set to this $GITHUB_AUTHTOKEN
-echo $GITHUB_AUTHTOKEN
-if [ ! -z "${GITHUB_AUTHTOKEN}" ];then
-    curl -u $GITHUB_AUTHTOKEN:x-oauth-basic https://api.github.com/user/repos -d "{\"name\":\"$repo_name\"}" 
-    git init
-    echo ".*" > .gitignore
-    echo "This will be your repo's readme" | tee README.md
-    git add .
-    git commit -m "Initial Commit"
-    git remote add origin "git@github.com:$GITHUB_USERNAME/$repo_name.git"
-    git push --set-upstream origin master
+REMOTE="`git remote`"
+if [ -z "${REMOTE}" ];then
+    echo no remote
+    if [ ! -z "${GITHUB_AUTHTOKEN}" ];then
+        curl -u $GITHUB_AUTHTOKEN:x-oauth-basic https://api.github.com/user/repos -d "{\"name\":\"$repo_name\"}" 
+        git init
+        echo "Making this repository ignore all .folders"
+        echo ".*/" > .gitignore
+        echo "This will be your repo's readme" | tee README.md
+        git add .
+        git commit -m "Initial Commit"
+        git remote add origin "git@github.com:$GITHUB_USERNAME/$repo_name.git"
+        git push --set-upstream origin master
+    fi
+else
+    echo This is already a git repo with a remote.
 fi
