@@ -1,3 +1,5 @@
+#!/bin/bash
+
 cd $CATTLE_ROOT
 git branch
 git status

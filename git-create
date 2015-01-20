@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #This is meant to be run on a new folder or git repo with no commits to
 #post straight to github.
