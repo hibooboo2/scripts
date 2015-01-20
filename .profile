@@ -37,4 +37,6 @@ elif [ "$(uname)" == 'Darwin' ]; then
    alias ls='ls -GtAph'
 fi
 
+source .dockerStuff
+
 cd ~/sandbox
