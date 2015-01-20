@@ -28,6 +28,7 @@ function addAlias(){
 
 alias del="rm -rf"
 alias home="cd ~"
+alias sand="cd ~/sandbox"
 alias ccat="highlight -O ansi -i"
 if [ "$(uname)" == 'Linux' ]; then
    alias ls='ls -t -A -p -h --color=auto'
@@ -39,4 +40,4 @@ fi
 
 source .dockerStuff
 
-cd ~/sandbox
+sand
