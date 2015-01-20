@@ -26,6 +26,7 @@ function addAlias(){
     echo "alias $1" >> ~/.profile
 }
 
+alias gcm="git commit -am"
 alias del="rm -rf"
 alias home="cd ~"
 alias sand="cd ~/sandbox"
