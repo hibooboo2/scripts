@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ ! -z "${1}" ];then
+    function ll(){
+        git log --all --graph --pretty=format:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative > git-log-commitsfor.txt
+    }
+    ll
+    if [ -z "$(cat git-log.txt | grep -i $1)" ];then
+        echo $1 has not contributed to this repo.
+        echo Try using the persons name, if you used email.
+    else
+        x=$(grep $1 -i git-log.txt | grep \- | wc -l)
+        y=$(grep $1 -iv git-log.txt | grep \- | wc -l)
+        echo $1 wrote ${x} commits in this repo.
+        echo $1 did not write ${y} commits in this repo.
+        percent=$(bc -l <<< "scale=2;$x/($x+$y)")
+        echo $1 owns ${percent#"."} percent of the commits.
+    fi
+    rm -f git-log-commitsfor.txt
+else
+    echo You must provide an argument.
+fi
