@@ -1,0 +1,50 @@
+export LIQUIBASE_HOME=$(find /usr/local/Cellar/liquibase -name libexec)
+export PATH="$PATH:$HOME/Documents/build-tools/bin"
+$(boot2docker shellinit)
+
+
+export CATTLE_ROOT="$HOME/Documents/code/cattle"
+export JAVA_HOME=$(/usr/libexec/java_home -v 1.7)
+export Build_Tools="$HOME/Documents/build-tools/bin"
+alias dockerPurge='docker rm -fv $(docker ps -qa);docker ps -a'
+alias moo="cd $CATTLE_ROOT"
+alias mooRun="$CATTLE_ROOT/scripts/build;$CATTLE_ROOT/scripts/run"
+alias mooTest="cd $CATTLE_ROOT/tests/integration;tox"
+alias rancherAgent="docker run --rm -v /var/run/docker.sock:/var/run/docker.sock rancher/agent http://10.0.2.2:8080"
+alias cleanDB="$CATTLE_ROOT/resources/content/db/mysql/drop_tables.sh"
+
+function fixTheRanch(){
+    moo
+    mysql.server start
+    mysql -uroot < resources/content/db/mysql/create_db_and_user_dev.sql
+    $CATTLE_ROOT/resources/content/db/mysql/drop_tables.sh
+    boot2docker up
+    dockerPurge
+    $(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock rancher/agent http://10.0.2.2:8080)
+}
+
+function setupTheRanch(){
+    moo
+    mysql.server start
+    mysql -uroot < resources/content/db/mysql/create_db_and_user_dev.sql
+    $CATTLE_ROOT/resources/content/db/mysql/drop_tables.sh
+    rm -f $CATTLE_ROOT/code/packaging/app/Cattle.launch
+    cp $CATTLE_ROOT/tools/eclipse/Cattle.launch $CATTLE_ROOT/code/packaging/app/
+    rancherAgent
+    cd $CATTLE_ROOT/tests/integration
+    rm -rf .venv
+    virtualenv .venv
+    . .venv/bin/activate
+    pip install -r test-requirements.txt
+    pip install -r requirements.txt
+}
+
+
+function testRanchSpy(){
+    mkdir venv && virtualenv venv && . venv/bin/activate
+    pip install -r requirements.txt
+    pip install -r test-requirements.txt
+    mkdir $HOME/cattle-home
+    CATTLE_DOCKER_USE_BOOT2DOCKER=true DOCKER_TEST=true CATTLE_HOME=$HOME/cattle-home \
+    py.test tests
+}

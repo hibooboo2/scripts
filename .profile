@@ -1,5 +1,5 @@
 export MYSCRIPTS="$HOME/scripts/"
-export PATH="${MYSCRIPTS}:${PATH}"
+export PATH="${MYSCRIPTS}:/usr/local/sbin:${PATH}"
 
 function parse_git_branch(){
     BRANCH=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
@@ -40,5 +40,6 @@ elif [ "$(uname)" == 'Darwin' ]; then
 fi
 
 source .dockerStuff
+source .rancherStuff
 
 sand
