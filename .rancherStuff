@@ -53,9 +53,10 @@ function testRanchSpy(){
     else
         . ./.venv/bin/activate
     fi
-    pip install -r requirements.txt
-    pip install -r test-requirements.txt
-    pip install -r dist-requirements.txt
+    echo $PS1
+    pip install -r requirements.txt 1> /dev/null
+    pip install -r test-requirements.txt 1> /dev/null
+    pip install -r dist-requirements.txt 1> /dev/null
     mkdir $HOME/cattle-home
     CATTLE_DOCKER_USE_BOOT2DOCKER=true CATTLE_HOME=$HOME/cattle-home \
     py.test tests
