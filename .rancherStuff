@@ -4,6 +4,10 @@ export SPY_HOME="$HOME/Documents/code/python-agent"
 export PATH="${PATH}:${FARMER_TOOLS}"
 $(boot2docker shellinit)
 
+export CATTLE_DOCKER_USE_BOOT2DOCKER=true
+export CATTLE_HOME=$HOME/cattle-home
+[[ ! -d "${CATTLE_HOME}" ]] && mkdir $CATTLE_HOME
+
 
 export CATTLE_ROOT="$HOME/Documents/code/cattle"
 export JAVA_HOME=$(/usr/libexec/java_home -v 1.7)
@@ -44,15 +48,16 @@ function setupTheRanch(){
 
 function testRanchSpy(){
     cd $SPY_HOME
-    if [ ! -d "./venv" ];then
-        mkdir venv && virtualenv venv && . venv/bin/activate
+    if [ ! -d ".venv" ];then
+        mkdir .venv && virtualenv .venv && . .venv/bin/activate
     else
-        . venv/bin/activate
+        . ./.venv/bin/activate
     fi
     pip install -r requirements.txt
     pip install -r test-requirements.txt
     pip install -r dist-requirements.txt
     mkdir $HOME/cattle-home
-    CATTLE_DOCKER_USE_BOOT2DOCKER=true DOCKER_TEST=true CATTLE_HOME=$HOME/cattle-home \
+    CATTLE_DOCKER_USE_BOOT2DOCKER=true CATTLE_HOME=$HOME/cattle-home \
     py.test tests
 }
+
