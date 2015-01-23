@@ -1,5 +1,6 @@
 export LIQUIBASE_HOME=$(find /usr/local/Cellar/liquibase -name libexec)
-export PATH="$PATH:$HOME/Documents/build-tools/bin"
+export FARMER_TOOLS="$HOME/Documents/build-tools/bin"
+export PATH="${PATH}:${FARMER_TOOLS}"
 $(boot2docker shellinit)
 
 
