@@ -1,5 +1,6 @@
 export LIQUIBASE_HOME=$(find /usr/local/Cellar/liquibase -name libexec)
 export FARMER_TOOLS="$HOME/Documents/build-tools/bin"
+export SPY_HOME="$HOME/Documents/code/python-agent"
 export PATH="${PATH}:${FARMER_TOOLS}"
 $(boot2docker shellinit)
 
@@ -42,9 +43,15 @@ function setupTheRanch(){
 
 
 function testRanchSpy(){
-    mkdir venv && virtualenv venv && . venv/bin/activate
+    cd $SPY_HOME
+    if [ ! -d "./venv" ];then
+        mkdir venv && virtualenv venv && . venv/bin/activate
+    else
+        . venv/bin/activate
+    fi
     pip install -r requirements.txt
     pip install -r test-requirements.txt
+    pip install -r dist-requirements.txt
     mkdir $HOME/cattle-home
     CATTLE_DOCKER_USE_BOOT2DOCKER=true DOCKER_TEST=true CATTLE_HOME=$HOME/cattle-home \
     py.test tests

@@ -1,1 +1,1 @@
-alias dockerPurge='docker rm -fv $(docker ps -qa);docker ps -qa'
+alias dockerPurge='docker rm -fv $(docker ps -qa);docker ps -qa;docker rmi $(docker images -f dangling=true -aq);docker images'
