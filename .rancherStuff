@@ -53,7 +53,6 @@ function testRanchSpy(){
     else
         . ./.venv/bin/activate
     fi
-    echo $PS1
     pip install -r requirements.txt 1> /dev/null
     pip install -r test-requirements.txt 1> /dev/null
     pip install -r dist-requirements.txt 1> /dev/null
