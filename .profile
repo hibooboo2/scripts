@@ -1,4 +1,4 @@
-export MYSCRIPTS="$HOME/scripts/"
+export MYSCRIPTS="$PWD/"
 export PATH="${MYSCRIPTS}:/usr/local/sbin:${PATH}"
 
 function parse_git_branch(){
