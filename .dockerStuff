@@ -1,1 +1,12 @@
-alias dockerPurge='docker rm -fv $(docker ps -qa);docker ps -qa;docker rmi $(docker images -f dangling=true -aq);docker images'
+function dockerClean(){
+    docker ps -q | sort > dockerpsOut1.txt
+    docker ps -qa |sort > dockerpsOut2.txt
+    comm -3 dockerpsOut1.txt dockerpsOut2.txt> dockerOut3.txt
+    if [ ! -z "$(cat dockerOut3.txt)" ];then
+        docker rm -fv $(cat dockerOut3.txt)
+    fi
+    rm -f dockerpsOut1.txt
+    rm -f dockerpsOut2.txt
+    rm -f dockerOut3.txt
+}
+alias dockerPurge='docker rm -fv $(docker ps -qa);docker rmi $(docker images -f dangling=true -aq);'

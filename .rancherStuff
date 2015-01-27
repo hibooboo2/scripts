@@ -22,10 +22,9 @@ alias cleanDB="$CATTLE_ROOT/resources/content/db/mysql/drop_tables.sh"
 function fixTheRanch(){
     moo
     mysql.server start
-    mysql -uroot < resources/content/db/mysql/create_db_and_user_dev.sql
+    mysql -uroot < resources/content/db/mysql/create_db_and_user_dev.sql > /dev/null
     $CATTLE_ROOT/resources/content/db/mysql/drop_tables.sh
     boot2docker up
-    dockerPurge
     $(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock rancher/agent http://10.0.2.2:8080)
 }
 
