@@ -1,0 +1,10 @@
+function startVirtualenv(){
+    if [ ! -z "$(which virtualenv)" ];then
+        if [ ! -d "./.venv/" ];then 
+            virtualenv .venv
+        fi
+        . ./.venv/bin/activate
+    else
+        echo You do not have virtual env installed
+    fi
+}

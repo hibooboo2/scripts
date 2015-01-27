@@ -41,5 +41,6 @@ fi
 
 source .dockerStuff
 source .rancherStuff
+source .virtualenv
 
 sand
