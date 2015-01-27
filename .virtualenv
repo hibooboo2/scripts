@@ -1,9 +1,33 @@
-function startVirtualenv(){
+function setupVirtualEnv(){
     if [ ! -z "$(which virtualenv)" ];then
         if [ ! -d "./.venv/" ];then 
             virtualenv .venv
         fi
         . ./.venv/bin/activate
+        find . -name "*requirements.txt" | xargs -L 1 pip install --upgrade -r
+        pip install --upgrade tox
+    else
+        echo You do not have virtual env installed
+    fi
+}
+
+function activateVenv(){
+    if [ ! -z "$(which virtualenv)" ];then
+        if [ ! -d "./.venv/" ];then 
+            setupVirtualEnv
+        fi
+        . ./.venv/bin/activate
+    else
+        echo You do not have virtual env installed
+    fi
+}
+
+function newVenv(){
+    if [ ! -z "$(which virtualenv)" ];then
+        if [ -d "./.venv/" ];then 
+            rm -rf ./.venv
+        fi
+        setupVirtualEnv
     else
         echo You do not have virtual env installed
     fi
