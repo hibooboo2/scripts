@@ -1,5 +1,7 @@
-export MYSCRIPTS="$PWD/"
-export PATH="${MYSCRIPTS}:/usr/local/sbin:${PATH}"
+export MYSCRIPTS="$HOME/scripts"
+export GOPATH="$HOME/go"
+export PATH="${MYSCRIPTS}:/usr/local/sbin:${PATH}:$GOPATH/bin"
+
 
 function parse_git_branch(){
     BRANCH=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
@@ -16,6 +18,10 @@ export PS1="$PS1\n\[\e[33m\]$? \[\e[m\] \[\e[32m\] \`parse_git_branch\` \[\e[m\]
 
 function br(){
     open -a /Applications/Brackets.app $1
+}
+
+function allinBR(){
+    grep $1 -irl . | xargs -L 1 open -a /Applications/Brackets.app
 }
 
 function mkexe(){

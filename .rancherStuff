@@ -1,7 +1,9 @@
 export LIQUIBASE_HOME=$(find /usr/local/Cellar/liquibase -name libexec)
-export FARMER_TOOLS="$HOME/Documents/build-tools/bin"
-export SPY_HOME="$HOME/Documents/code/python-agent"
+export RANCH_HOME="$HOME/code/"
+export FARMER_TOOLS="$HOME/code/build-tools/bin"
+export SPY_HOME="$HOME/code/python-agent"
 export PATH="${PATH}:${FARMER_TOOLS}"
+export HOST_API_ROOT="$HOME/"
 $(boot2docker shellinit)
 
 export CATTLE_DOCKER_USE_BOOT2DOCKER=true
@@ -9,11 +11,12 @@ export CATTLE_HOME=$HOME/cattle-home
 [[ ! -d "${CATTLE_HOME}" ]] && mkdir $CATTLE_HOME
 
 
-export CATTLE_ROOT="$HOME/Documents/code/cattle"
+export CATTLE_ROOT="$HOME/code/cattle"
 export JAVA_HOME=$(/usr/libexec/java_home -v 1.7)
-export Build_Tools="$HOME/Documents/build-tools/bin"
+export Build_Tools="$HOME/code/build-tools/bin"
 alias dockerPurge='docker rm -fv $(docker ps -qa);docker ps -a'
 alias moo="cd $CATTLE_ROOT"
+alias mooGo="cd $HOST_API_ROOT"
 alias mooRun="$CATTLE_ROOT/scripts/build;$CATTLE_ROOT/scripts/run"
 alias mooTest="cd $CATTLE_ROOT/tests/integration;tox"
 alias rancherAgent="docker run --rm -v /var/run/docker.sock:/var/run/docker.sock rancher/agent http://10.0.2.2:8080"
