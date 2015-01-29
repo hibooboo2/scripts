@@ -63,3 +63,4 @@ function testRanchSpy(){
     py.test tests
 }
 
+. ./.youHaveTheRanch
