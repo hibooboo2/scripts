@@ -5,6 +5,7 @@ do
 	which $i >/dev/null && continue || { echo "$i command not found."; exit 1; }
 done
 if [ -d ${RANCH_HOME:?"Is is not set. Please set it."} ]; then
+    [[ -f ".youhaveTheRanch" ]] && echo please Delete $RANCH_HOME.youhaveTheRanch && exit 1
     cd $RANCH_HOME
     for i in $(curl https://api.github.com/orgs/rancherio/repos | jq -r .[].name)
     do 
@@ -12,7 +13,7 @@ if [ -d ${RANCH_HOME:?"Is is not set. Please set it."} ]; then
             hub clone rancherio/$i >/dev/null && echo Cloned $i
         else
             echo You already have rancherio/$i
-            if [ "$(1)" == "update" ]; then
+            if [ "$1" == "update" ]; then
                 cd $i
                 branchPrev=$(git branch)
                 hub checkout master && hub pull
