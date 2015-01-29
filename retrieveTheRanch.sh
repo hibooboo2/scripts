@@ -9,11 +9,17 @@ if [ -d ${RANCH_HOME:?"Is is not set. Please set it."} ]; then
     for i in $(curl https://api.github.com/orgs/rancherio/repos | jq -r .[].name)
     do 
         if [ ! -d "./$i" ]; then
-            hub clone rancherio/$i >/dev/null
-            echo cloned $i
+            hub clone rancherio/$i >/dev/null && echo Cloned $i
         else
             echo You already have rancherio/$i
-            hub checkout master && hub pull
+            if [ "$(1)" == "update" ]; then
+                cd $i
+                branchPrev=$(git branch)
+                hub checkout master && hub pull
+                hub checkout $branchPrev
+                unset branchPrev
+                cd ..
+            fi
         fi
         touch .youHaveTheRanch
     done
