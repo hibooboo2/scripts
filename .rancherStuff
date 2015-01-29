@@ -3,7 +3,7 @@ export RANCH_HOME="$HOME/code/"
 export FARMER_TOOLS="$HOME/code/build-tools/bin"
 export SPY_HOME="$HOME/code/python-agent"
 export PATH="${PATH}:${FARMER_TOOLS}"
-export HOST_API_ROOT="$HOME/"
+export HOST_API_ROOT="$RANCH_HOME/host-api"
 $(boot2docker shellinit)
 
 export CATTLE_DOCKER_USE_BOOT2DOCKER=true
