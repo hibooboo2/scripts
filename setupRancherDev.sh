@@ -67,7 +67,7 @@ if [ ! -z "${CATTLE_ROOT}" ];then
     echo "export JAVA_HOME=$(/usr/libexec/java_home -v 1.7)" >> ~/.profile
     
     blowUpAndDownloadCattle
-    cloneOrUpdateBuildTools
+    getToolsToFarm
 else
     echo \$CATTLE_ROOT not detected.
     echo please define this in your .profile or something sourced upon bash startup.
