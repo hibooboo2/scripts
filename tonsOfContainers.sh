@@ -4,4 +4,5 @@ do
     docker run -d hibooboo2/counting
     sleep 1
     count+=1
+    echo $count
 done
