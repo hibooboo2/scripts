@@ -28,13 +28,13 @@ function fixTheRanch(){
     mysql -uroot < resources/content/db/mysql/create_db_and_user_dev.sql > /dev/null
     $CATTLE_ROOT/resources/content/db/mysql/drop_tables.sh
     boot2docker up
-    $(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock rancher/agent http://10.0.2.2:8080)
+    moo
+    ./tools/development/register-boot2docker.sh
 }
 
 function setupTheRanch(){
     moo
     mysql.server start
-    mysql -uroot < resources/content/db/mysql/create_db_and_user_dev.sql
     $CATTLE_ROOT/resources/content/db/mysql/drop_tables.sh
     rm -f $CATTLE_ROOT/code/packaging/app/Cattle.launch
     cp $CATTLE_ROOT/tools/eclipse/Cattle.launch $CATTLE_ROOT/code/packaging/app/
@@ -62,5 +62,3 @@ function testRanchSpy(){
     CATTLE_DOCKER_USE_BOOT2DOCKER=true CATTLE_HOME=$HOME/cattle-home \
     py.test tests
 }
-
-. ./.youHaveTheRanch
