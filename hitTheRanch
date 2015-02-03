@@ -1,7 +1,0 @@
-#!/bin/bash
-
-cd $CATTLE_ROOT
-git branch
-git status
-git checkout master
-git fetch ranch

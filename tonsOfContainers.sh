@@ -1,3 +1,7 @@
+#!/bin/bash
+
+set -e
+
 count=0
 while [ $count -lt 10000 ]
 do
