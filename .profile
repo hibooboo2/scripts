@@ -38,6 +38,7 @@ alias del="rm -rf"
 alias home="cd ~"
 alias sand="cd ~/sandbox"
 alias ccat="highlight -O ansi -i"
+alias goHome="ssh ${ANOTHER_BOX}"
 if [ "$(uname)" == 'Linux' ]; then
    alias ls='ls -t -A -p -h -F --color=auto'
 elif [ "$(uname)" == 'Freebsd' ]; then
