@@ -6,15 +6,14 @@ export PATH="${MYSCRIPTS}:/usr/local/sbin:${PATH}:$GOPATH/bin"
 function parse_git_branch(){
     BRANCH=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
     if [ ! "${BRANCH}" == "" ];then
-        echo "[${BRANCH}]"
+        echo "[${BRANCH}] $(($(git st |wc -l)-1))"
     else
         echo ""
     fi
 }
-
-PS1="\n[\[\e[32m\]\w\[\e[m\]]"
-PS1="$PS1\n\[\e[35m\]\u\[\e[m\]@\[\e[36m\]\H\[\e[m\]"
-export PS1="$PS1\n\[\e[33m\]$? \[\e[m\] \[\e[32m\] \`parse_git_branch\` \[\e[m\]\[\e[31m\]>\[\e[m\] "
+PS1="\n[\[\e[32m\]\w\[\e[m\]]" #Working directory
+PS1="$PS1\n\[\e[35m\]\u\[\e[m\]@\[\e[36m\]\H\[\e[m\]" #User and Host
+export PS1="$PS1\n\[\e[33m\]$? \[\e[m\] \[\e[32m\] \`parse_git_branch\` \[\e[m\]\[\e[31m\]>\[\e[m\] " # Branch
 
 function br(){
     open -a /Applications/Brackets.app $1
