@@ -8,3 +8,11 @@ do
     sleep 1
     fi
 done
+
+#Containers=$(docker ps -qa)
+#for i in $Containers
+#do
+#    Inspect=$(docker inspect $i)
+#    echo Name = $(echo $Inspect | jq -r .[0].Name) Image  = $(echo $Inspect | jq -r .[0].AppArmorProfile)
+#    
+#done
