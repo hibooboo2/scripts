@@ -23,7 +23,7 @@ echo Fetching ${type} ${1}
 for i in $(curl -# https://api.github.com/${type}s/${1}/repos | jq -r .[].name)
 do
     if [ ! -d ${CODE_HOME}/$1/$i ]; then
-        hub clone ${1}/${i} >/dev/null && echo Cloned ${1}/${i} to ${CODE_HOME}/${1}/${i}
+        hub clone ${CODE_HOME}/${1}/${i} >/dev/null && echo Cloned ${1}/${i} to ${CODE_HOME}/${1}/${i}
     else
         echo You already have ${1}/$i
         if [ "$2" == "update" ]; then
