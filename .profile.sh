@@ -1,6 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
 export MYSCRIPTS="$HOME/scripts"
+export CODE_HOME="$HOME/code"
 export GOPATH="$HOME/go"
 export PATH="${MYSCRIPTS}:/usr/local/sbin:${PATH}:$GOPATH/bin"
 
@@ -13,9 +14,36 @@ function parse_git_branch(){
         echo ""
     fi
 }
-PS1="\n[\[\e[32m\]\w\[\e[m\]]" #Working directory
-PS1="$PS1\n\[\e[35m\]\u\[\e[m\]@\[\e[36m\]\H\[\e[m\]" #User and Host
-export PS1="$PS1\n\[\e[33m\]$? \[\e[m\] \[\e[32m\] \`parse_git_branch\` \[\e[m\]\[\e[31m\]>\[\e[m\] " # Branch
+
+function __prompt_command() {
+    local EXIT="$?"             # This needs to be first
+    PS1="\n"
+
+    local RCol='\[\e[0m\]'
+
+    local Red='\[\e[0;31m\]'
+    local Gre='\[\e[0;32m\]'
+    local BYel='\[\e[1;33m\]'
+    local BBlu='\[\e[1;34m\]'
+    local Pur='\[\e[0;35m\]'
+    local LBlu='\[\e[0;36m\]'
+    local Whi='\[\e[0;29m\]'
+
+    PS1+="${Gre}[\w]${RCol}\n" # Woriking Dir
+
+    if [ $EXIT != 0 ]; then
+        PS1+="${Red}\u${RCol}" # Add red if exit code non 0
+        EXIT="${Red}${EXIT}${RCol}" #Red exit code
+    else
+        PS1+="${Pur}\u${RCol}" # purple username
+        EXIT="${BYel}${EXIT}${RCol}" # Yellow exit code
+    fi
+
+    PS1+="@${LBlu}\h ${Rcol} \n" # user @ host
+    PS1+="${EXIT} ${Gre}\`parse_git_branch\`${RCol}${Red} > ${Rcol}${Whi}${Rcol}" # Branch
+}
+
+export PROMPT_COMMAND=__prompt_command  # Func to gen PS1 after CMDs
 
 function br(){
     open -a /Applications/Brackets.app $1
