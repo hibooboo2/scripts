@@ -49,7 +49,7 @@ function br(){
     open -a /Applications/Brackets.app $1
 }
 function jet(){
-    open -a /Applications/IntelliJ\ IDEA\ 14.app $1
+    open -a /Applications/IntelliJ\ IDEA\ 14.app ${1}
 }
 
 function allinBR(){

@@ -3,7 +3,7 @@
 set -e
 
 [[ -z "${1}" ]] && echo Please specify User or Org to clone. && exit 1
-[[ -z ${CODE_HOME} ]] && echo Please set CODE_HOME && exit 1
+: ${CODE_HOME:=${HOME}/code} && mkdir -p ${CODE_HOME} && echo CODE_HOME is set to ${CODE_HOME}
 
 CMDS="hub jq curl git"
 
@@ -23,7 +23,8 @@ echo Fetching ${type} ${1}
 for i in $(curl -# https://api.github.com/${type}s/${1}/repos | jq -r .[].name)
 do
     if [ ! -d ${CODE_HOME}/$1/$i ]; then
-        hub clone ${CODE_HOME}/${1}/${i} >/dev/null && echo Cloned ${1}/${i} to ${CODE_HOME}/${1}/${i}
+        cd ${CODE_HOME}/${1}
+        hub clone ${1}/${i} >/dev/null && echo Cloned ${1}/${i} to ${CODE_HOME}/${1}/${i}
     else
         echo You already have ${1}/$i
         if [ "$2" == "update" ]; then
