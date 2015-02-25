@@ -18,6 +18,9 @@ export PS1="$PS1\n\[\e[33m\]$? \[\e[m\] \[\e[32m\] \`parse_git_branch\` \[\e[m\]
 function br(){
     open -a /Applications/Brackets.app $1
 }
+function jet(){
+    open -a /Applications/IntelliJ\ IDEA\ 14.app $1
+}
 
 function allinBR(){
     grep $1 -irl . | xargs -L 1 open -a /Applications/Brackets.app
