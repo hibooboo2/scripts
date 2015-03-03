@@ -51,6 +51,9 @@ function br(){
 function jet(){
     open -a /Applications/IntelliJ\ IDEA\ 14.app ${1}
 }
+function pyCharm(){
+    open -a /Applications/PyCharm\ CE.app ${1}
+}
 
 function allinBR(){
     grep $1 -irl . | xargs -L 1 br $1

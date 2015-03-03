@@ -9,4 +9,4 @@ function dockerClean(){
     rm -f dockerpsOut2.txt
     rm -f dockerOut3.txt
 }
-alias dockerPurge='docker rm -fv $(docker ps -qa);docker rmi $(docker images -f dangling=true -aq);'
+#alias dockerPurge='docker rm -fv $(docker ps -qa);docker rmi $(docker images -f dangling=true -aq);'
