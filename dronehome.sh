@@ -2,6 +2,7 @@
 
 docker stop drone-ci
 docker rm drone-ci
+docker pull drone/drone
 docker run -d --privileged \
 --name="drone-ci" \
 -e DRONE_GITHUB_CLIENT=${DRONE_GITHUB_CLIENT} \
@@ -16,7 +17,7 @@ drone/drone
 docker stop drone-wall
 docker rm drone-wall
 docker pull scottwferg/drone-wall
-docker run -p 3000:3000 \
+docker run -p 3000:3000 -d \
 -e API_SCHEME=$API_SCHEME \
 -e API_DOMAIN=$API_DOMAIN \
 -e API_TOKEN=$API_TOKEN \
