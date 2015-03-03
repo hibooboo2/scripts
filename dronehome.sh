@@ -17,7 +17,7 @@ drone/drone
 docker stop drone-wall
 docker rm drone-wall
 docker pull scottwferg/drone-wall
-docker run -p 3000:3000 -d \
+docker run -p 5000:3000 -d \
 -e API_SCHEME=$API_SCHEME \
 -e API_DOMAIN=$API_DOMAIN \
 -e API_TOKEN=$API_TOKEN \
