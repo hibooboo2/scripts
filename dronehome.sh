@@ -1,6 +1,7 @@
 #!/bin/sh
 
-docker rm -f drone-ci
+docker stop drone-ci
+docker rm drone-ci
 docker run -d --privileged \
 --name="drone-ci" \
 -e DRONE_GITHUB_CLIENT=${DRONE_GITHUB_CLIENT} \
