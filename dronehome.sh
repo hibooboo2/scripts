@@ -8,6 +8,7 @@ docker run -d --privileged \
 -e DRONE_GITHUB_CLIENT=${DRONE_GITHUB_CLIENT} \
 -e DRONE_GITHUB_SECRET=${DRONE_GITHUB_SECRET} \
 -e DRONE_DATABASE_DATASOURCE=/var/lib/drone/drone.sqlite \
+-e DRONE_WORKER_NODES=unix:///var/run/docker.sock,unix:///var/run/docker.sock,unix:///var/run/docker.sock,unix:///var/run/docker.sock,unix:///var/run/docker.sock,unix:///var/run/docker.sock,unix:///var/run/docker.sock,unix:///var/run/docker.sock,unix:///var/run/docker.sock,unix:///var/run/docker.sock,unix:///var/run/docker.sock,unix:///var/run/docker.sock \
 -p 8080:80 \
 -v /var/lib/drone/ \
 -v ${HOME}/drone.sqlite:/var/lib/drone/drone.sqlite \
