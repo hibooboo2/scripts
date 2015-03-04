@@ -5,7 +5,7 @@ docker stop drone-ci
 docker rm drone-ci
 docker run -d --privileged \
 --name="drone-ci" \
--e VIRTUAL_HOST=drone.jamescarlharris.com
+-e VIRTUAL_HOST=drone.jamescarlharris.com:8080
 -e DRONE_GITHUB_CLIENT=${DRONE_GITHUB_CLIENT} \
 -e DRONE_GITHUB_SECRET=${DRONE_GITHUB_SECRET} \
 -e DRONE_DATABASE_DATASOURCE=/var/lib/drone/drone.sqlite \
@@ -22,7 +22,7 @@ docker rm drone-wall
 docker run \ 
 #-p 5000:3000 \
 -d \
--e VIRTUAL_HOST=wall.jamescarlharris.com
+-e VIRTUAL_HOST=wall.jamescarlharris.com:8080
 -e API_SCHEME=$API_SCHEME \
 -e API_DOMAIN=$API_DOMAIN \
 -e API_TOKEN=$API_TOKEN \
