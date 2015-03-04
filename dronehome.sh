@@ -5,7 +5,7 @@ docker stop drone-ci
 docker rm drone-ci
 docker run -d --privileged \
 --name="drone-ci" \
--e VIRTUAL_HOST=drone.jamescarlharris.com:8080
+-e VIRTUAL_HOST=home.jamescarlharris.com:8080
 -e DRONE_GITHUB_CLIENT=${DRONE_GITHUB_CLIENT} \
 -e DRONE_GITHUB_SECRET=${DRONE_GITHUB_SECRET} \
 -e DRONE_DATABASE_DATASOURCE=/var/lib/drone/drone.sqlite \
