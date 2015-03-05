@@ -19,8 +19,7 @@ drone/drone
 docker pull scottwferg/drone-wall
 docker stop drone-wall
 docker rm drone-wall
-docker run \ 
--d \
+docker run -d \
 -e VIRTUAL_HOST=wall.jamescarlharris.com \
 -e API_SCHEME=$API_SCHEME \
 -e API_DOMAIN=$API_DOMAIN \
