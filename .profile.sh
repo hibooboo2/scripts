@@ -71,7 +71,7 @@ alias gcm="git commit -am"
 alias myscripts="cd $MYSCRIPTS"
 alias del="rm -rf"
 alias home="cd ~"
-alias sand="cd ~/sandbox"
+alias sand="mkdir -p ~/sandbox; cd ~/sandbox"
 alias ccat="highlight -O ansi -i"
 if [ "$(uname)" == 'Linux' ]; then
    alias ls='ls -t -A -p -h -F --color=auto'
