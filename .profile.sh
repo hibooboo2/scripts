@@ -6,6 +6,11 @@ export GOPATH="$HOME/go"
 export PATH="${MYSCRIPTS}:/usr/local/sbin:${PATH}:$GOPATH/bin"
 
 
+export HISTCONTROL=ignoredups:erasedups  # no duplicate entries
+export HISTSIZE=10000000                   # big big history
+export HISTFILESIZE=100000000               # big big history
+shopt -s histappend
+
 function parse_git_branch(){
     BRANCH=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
     if [ ! "${BRANCH}" == "" ];then
@@ -41,6 +46,14 @@ function __prompt_command() {
 
     PS1+="@${LBlu}\h ${Rcol} \n" # user @ host
     PS1+="${EXIT} ${Gre}\`parse_git_branch\`${RCol}${Red} > ${Rcol}${Whi}${Rcol}" # Branch
+}
+
+function no_sudo_docker(){
+    docker ps
+    [[ "0" == "${?}" ]] && exit 0
+    sudo groupadd docker
+    sudo gpasswd -a ${USER} docker
+    sudo service docker restart
 }
 
 export PROMPT_COMMAND=__prompt_command  # Func to gen PS1 after CMDs
