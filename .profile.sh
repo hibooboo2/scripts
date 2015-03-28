@@ -7,8 +7,8 @@ export PATH="${MYSCRIPTS}:/usr/local/sbin:${PATH}:$GOPATH/bin"
 
 
 export HISTCONTROL=ignoredups:erasedups  # no duplicate entries
-export HISTSIZE=10000000                   # big big history
-export HISTFILESIZE=100000000               # big big history
+export HISTSIZE=100000                   # big big history
+export HISTFILESIZE=10000000000000               # big big history
 shopt -s histappend
 
 function parse_git_branch(){
@@ -25,7 +25,6 @@ function __prompt_command() {
     PS1="\n"
 
     local RCol='\[\e[0m\]'
-
     local Red='\[\e[0;31m\]'
     local Gre='\[\e[0;32m\]'
     local BYel='\[\e[1;33m\]'
