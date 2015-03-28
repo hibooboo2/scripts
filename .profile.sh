@@ -6,7 +6,7 @@ export GOPATH="$HOME/go"
 export PATH="${MYSCRIPTS}:/usr/local/sbin:${PATH}:$GOPATH/bin"
 
 
-export HISTCONTROL=ignoredups:erasedups  # no duplicate entries
+export HISTCONTROL=ignoredups  # no duplicate entries
 export HISTSIZE=100000                   # big big history
 export HISTFILESIZE=10000000000000               # big big history
 shopt -s histappend
