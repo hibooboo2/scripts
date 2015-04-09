@@ -92,7 +92,7 @@ popd()
 #alias cd so it uses the directory stack
 alias cd='pushd'
 #aliad cdb as a command that goes one directory back in the stack
-alias cdb'popd'
+alias cdb='popd'
 
 alias gcm="git commit -am"
 alias myscripts="cd $MYSCRIPTS"
