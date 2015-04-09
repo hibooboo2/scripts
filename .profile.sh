@@ -79,6 +79,21 @@ function addAlias(){
     echo "alias $1" >> ~/.profile
 }
 
+#redefine pushd and popd so they don't output the directory stack
+pushd()
+{
+    builtin pushd "$@" > /dev/null
+}
+popd()
+{
+    builtin popd "$@" > /dev/null
+}
+
+#alias cd so it uses the directory stack
+alias cd='pushd'
+#aliad cdb as a command that goes one directory back in the stack
+alias cdb'popd'
+
 alias gcm="git commit -am"
 alias myscripts="cd $MYSCRIPTS"
 alias del="rm -rf"
