@@ -7,9 +7,12 @@ export PATH="${MYSCRIPTS}:/usr/local/sbin:${PATH}:$GOPATH/bin"
 
 
 export HISTCONTROL=ignoredups  # no duplicate entries
-export HISTSIZE=100000                   # big big history
+export HISTSIZE=10000000                   # big big history
 export HISTFILESIZE=10000000000000               # big big history
 shopt -s histappend
+shopt -s autocd
+shopt -s dotglob
+shopt -s globstar
 
 function parse_git_branch(){
     BRANCH=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
