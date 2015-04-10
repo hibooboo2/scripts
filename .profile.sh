@@ -3,7 +3,7 @@
 export MYSCRIPTS="$HOME/scripts"
 export CODE_HOME="$HOME/code"
 export GOPATH="$HOME/go"
-export PATH="${MYSCRIPTS}:/usr/local/sbin:${PATH}:$GOPATH/bin"
+export PATH="${MYSCRIPTS}:${MYSCRIPTS}/bin:/usr/local/sbin:${PATH}:$GOPATH/bin"
 
 
 export HISTCONTROL=ignoredups  # no duplicate entries
