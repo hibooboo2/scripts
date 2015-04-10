@@ -6,7 +6,9 @@ set -ex
 [[ -z $(which git) ]] && echo You need git installed! && exit 1
 if [ -d "${MYSCRPITS}" ]
 then
+    pushd ${MYSCRPITS}
     git pull -r origin master
+    popd
 else
     git clone https://github.com/hibooboo2/scripts.git ${MYSCRPITS}
 fi
