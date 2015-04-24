@@ -1,18 +1,9 @@
 #!/bin/bash
 
-export MYSCRIPTS="$HOME/scripts"
-export CODE_HOME="$HOME/code"
-export GOPATH="$HOME/go"
-export PATH="${MYSCRIPTS}:${MYSCRIPTS}/bin:/usr/local/sbin:${PATH}:$GOPATH/bin"
-
-
 export HISTCONTROL=ignoredups  # no duplicate entries
 export HISTSIZE=10000000                   # big big history
 export HISTFILESIZE=10000000000000               # big big history
 shopt -s histappend
-shopt -s autocd
-shopt -s dotglob
-shopt -s globstar
 
 function parse_git_branch(){
     BRANCH=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
@@ -51,8 +42,9 @@ function __prompt_command() {
 }
 
 function no_sudo_docker(){
+    [[ -z "$(which docker)" ]] && echo Docker seems to not be here. && exit 1
     docker ps
-    [[ "0" == "${?}" ]] && exit 0
+    [[ "0" == "${?}" ]] && echo No sudo required to use docker. && exit 0
     sudo groupadd docker
     sudo gpasswd -a ${USER} docker
     sudo service docker restart
@@ -82,6 +74,10 @@ function addAlias(){
     echo "alias $1" >> ~/.profile
 }
 
+function ccat(){
+    [[ -z "$(which highlight)" ]] && cat ${1}
+    highlight --force -O ansi -i ${1}
+}
 #redefine pushd and popd so they don't output the directory stack
 pushd()
 {
@@ -106,13 +102,14 @@ alias myscripts="cd $MYSCRIPTS"
 alias del="rm -rf"
 alias home="cd ~"
 alias sand="mkdir -p ~/sandbox; cd ~/sandbox"
-alias ccat="highlight -O ansi -i"
 if [ "$(uname)" == 'Linux' ]; then
-   alias ls='ls -t -A -p -h -F --color=auto'
+    alias ls='ls -t -A -p -h -F --color=auto'
+    shopt -s autocd 2&>1 /dev/null
+    shopt -s dotglob 2&>1 /dev/null
+    shopt -s globstar 2&>1 /dev/null
 elif [ "$(uname)" == 'Freebsd' ]; then
    alias ls='ls -GtAphF'
 elif [ "$(uname)" == 'Darwin' ]; then
    alias ls='ls -GtAphF'
 fi
 
-sand
