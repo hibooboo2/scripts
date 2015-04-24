@@ -67,7 +67,7 @@ function jet(){
     open -a /Applications/IntelliJ\ IDEA\ 14.app ${1}
 }
 function pyCharm(){
-    open -a /Applications/PyCharm\ CE.app ${1}
+    open -a /Applications/PyCharm.app ${1}
 }
 
 function allinBR(){
@@ -97,6 +97,9 @@ alias cd='pushd'
 #aliad cdb as a command that goes one directory back in the stack
 alias cdb='popd'
 alias dirs='dirs -v -l'
+alias gi='grep -i'
+alias gg='git grep -i'
+alias myip='curl canihazip.com/s'
 
 alias gcm="git commit -am"
 alias myscripts="cd $MYSCRIPTS"
