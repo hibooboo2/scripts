@@ -6,3 +6,5 @@ git config --global alias.tags 'tag -l'
 git config --global alias.remotes 'remote -v'
 git config --global alias.branches 'branch -avv'
 git config --global branch.autosetupmerge false
+[[ ! -z "${USER_EMAIL}" ]] && git config --global user.email '${USER_EMAIL}'
+[[ ! -z "${USER_NAME}" ]] && git config --global user.name '${USER_NAME}'
