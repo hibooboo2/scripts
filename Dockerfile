@@ -5,5 +5,5 @@ ENV user=wizardofmath
 VOLUME /source
 WORKDIR /source
 ADD . /source/scripts
-RUN /source/scripts/bootstrap
+RUN /source/scripts/scripts/bootstrap
 ENTRYPOINT /bin/bash

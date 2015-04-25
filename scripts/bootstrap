@@ -2,6 +2,7 @@
 
 set -e
 
+echo . /source/scripts/.profile >> ~/.profile
 cd /source/scripts
 mkdir /source/scripts/bin
 apt-get update
