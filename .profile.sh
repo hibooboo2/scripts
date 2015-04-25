@@ -96,6 +96,7 @@ alias dirs='dirs -v -l'
 alias gi='grep -i'
 alias gg='git grep -i'
 alias myip='curl canihazip.com/s'
+alias goHome='ssh wizardofmath@home.jamescarlharris.com -p 2222'
 
 alias gcm="git commit -am"
 alias myscripts="cd $MYSCRIPTS"
