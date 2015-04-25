@@ -8,11 +8,8 @@ echo . /source/scripts/.profile >> /etc/bash.bashrc
 cd /source/scripts
 mkdir /source/scripts/bin
 apt-get update
-apt-get install -y --no-install-recommends git curl vim openssh-client openssh-server
-curl --insecure -OL http://stedolan.github.io/jq/download/linux64/jq
-chmod u+x jq
-curl --insecure -O https://github.com/github/hub/releases/download/v2.2.1/hub-linux-amd64-2.2.1.tar.gz
-#tar -xzf /source/scripts/hub-linux-amd64-2.2.1.tar.gz
-#mv hub-linux-amd64-2.2.1/hub /source/scripts/bin/hub
-#chmod u+x /source/scripts/bin/hub
-#rm -fr hub-linux-amd64-2.2.1/
+apt-get install -y --no-install-recommends git curl vim openssh-client openssh-server ruby
+curl --insecure -L http://stedolan.github.io/jq/download/linux64/jq -o /usr/bin/jq
+chmod 755 /usr/bin/jq
+sudo curl -k https://hub.github.com/standalone -Lo /usr/bin/hub
+sudo chmod 755 /usr/bin/hub
