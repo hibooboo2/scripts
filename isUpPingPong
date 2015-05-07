@@ -55,5 +55,6 @@ then
     done
 else
     message ${URL_STARTED} "I'll Let you know when ${URL_TO_WATCH} is up."
-    sendResponse $(isServerUp 7200)
+    isServerUp 7200
+    sendResponse  ${?}
 fi
