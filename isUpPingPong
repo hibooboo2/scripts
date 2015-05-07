@@ -13,16 +13,15 @@ message(){
     local SLACK_TO=${1}
     curl -s -X POST https://hooks.slack.com/services/${SLACK_WEBHOOK_TOKEN} -d "{ \"text\": \"${MESSAGE}\" , \"channel\": \"${SLACK_TO}\" , \"username\" : \"${SLACK_FROM}-Bot\" }"
 }
+message ${URL_STARTED} "I'll let you know when ${URL_TO_WATCH} is up"
 COUNTER=0
-while [[ "$(curl -s ${URL_TO_WATCH}/ping)" != "pong" ]];
+while [[ "$(curl -s --max-time 1 ${URL_TO_WATCH}/ping)" != "pong" ]]
 do
     [[ $COUNTER -gt 7200 ]] && break
-    sleep .5
     let COUNTER=COUNTER+1
 done
-sleep 1
-if [[ "$(curl -s ${URL_TO_WATCH}/ping)" == "pong" ]];then
-    message ${URL_STARTED} "Server is running ${URL_TO_WATCH}"
+if [[ "$(curl -s --max-time 1 ${URL_TO_WATCH}/ping)" == "pong" ]];then
+    message ${URL_STARTED} "Server is running URL: ${URL_TO_WATCH} watched for ${COUNTER} tries"
 else
     message ${URL_FAILED} "Server is not running ${URL_TO_WATCH}"
 fi
