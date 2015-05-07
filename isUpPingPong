@@ -34,7 +34,8 @@ isServerUp(){
 sendResponse(){
     if [[ "${1}" == "0" ]];then
         message ${URL_STARTED} "Server is running URL: ${URL_TO_WATCH} :+1:"
-    else
+    elif [[ "${1}" == "1" ]]
+    then
         message ${URL_FAILED} "${URL_TO_WATCH} Is down! :-1:"
     fi
 }
