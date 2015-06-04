@@ -1,4 +1,8 @@
 git config --global alias.cm 'commit -am'
+git config --global alias.cma 'commit -a --amend'
+git config --global alias.com 'checkout origin/master'
+git config --global alias.pom 'pull -r origin master'
+git config --global alias.rom 'rebase -i origin/master'
 git config --global alias.do 'diff --stat origin/master'
 git config --global alias.ce "commit -m 'Empty Commit' --allow-empty"
 git config --global alias.lg "log --all --graph --pretty=format:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"

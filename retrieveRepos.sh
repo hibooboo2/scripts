@@ -24,12 +24,12 @@ for i in $(curl -# https://api.github.com/${type}s/${1}/repos | jq -r .[].name)
 do
     if [ ! -d ${CODE_HOME}/$1/$i ]; then
         cd ${CODE_HOME}/${1}/
-        hub clone ${1}/${i} >/dev/null && echo Cloned ${1}/${i} to ${CODE_HOME}/${1}/${i}
+        hub clone ${1}/${i} >/dev/null && echo Cloned ${1}/${i} to ${CODE_HOME}/${1}/${i} &
     else
         echo You already have ${1}/$i
         if [ "$2" == "update" ]; then
             cd ${CODE_HOME}/${1}/${i}
-            git fetch --all
+            git fetch --all &
         fi
     fi
 done

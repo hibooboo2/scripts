@@ -5,7 +5,7 @@ function setupVirtualEnv(){
         fi
         . ./.venv/bin/activate
         pip install --upgrade pip
-	find . -name "*requirements.txt" | xargs -L 1 pip install --upgrade -r
+    find . -name "*requirements.txt" | xargs -L 1 pip install --upgrade -r
         pip install --upgrade tox
     else
         echo You do not have virtual env installed
