@@ -93,8 +93,8 @@ alias cd='pushd'
 #aliad cdb as a command that goes one directory back in the stack
 alias cdb='popd'
 alias dirs='dirs -v -l'
-alias gi='grep -i'
-alias gg='git grep -i'
+alias gi='grep -in'
+alias gg='git grep -in'
 alias myip='curl canihazip.com/s'
 alias goHome='ssh wizardofmath@home.jamescarlharris.com -p 2222'
 
