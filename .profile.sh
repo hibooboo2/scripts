@@ -88,6 +88,10 @@ popd()
     builtin popd "$@" > /dev/null
 }
 
+sendtext () { 
+    curl http://textbelt.com/text -d number=${1} -d "message=$2" 
+}
+
 #alias cd so it uses the directory stack
 alias cd='pushd'
 #aliad cdb as a command that goes one directory back in the stack
