@@ -1,0 +1,26 @@
+#!/bin/bash
+if [ "$#" -ne 2 ]; then
+    echo "Illegal number of parameters $#"
+    echo "Recieved args:"
+    echo "    $@"
+    echo "Usage gcr \${remote to check for merged changes} \${remote to clean}"
+    echo ""
+    echo "gcr origin/master hibooboo2"
+    echo ""
+    echo "Would delete all branches on hibooboo2 that have been merged to origin/master"
+    exit 1
+fi
+
+num="`git branch --all --merged ${1}  | grep remotes/${2} | wc -l`"
+[[ `echo ${num}` == 0 ]] && exit 0
+
+git branch --all --merged ${1}  | grep remotes/${2}
+
+echo Delete all of these branches? \(Y/N\)
+read answer
+if [ answer == "Y" ]
+then
+    git branch --all --merged ${1}  | grep remotes/${2} | cut -d / -f 3 | xargs -L 1 git push --no-verify --delete ${2}
+else
+    echo No branches deleted.
+fi
