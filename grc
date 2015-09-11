@@ -1,26 +1,39 @@
 #!/bin/bash
 if [ "$#" -ne 2 ]; then
+    fileName="${0##*/}"
     echo "Illegal number of parameters $#"
     echo "Recieved args:"
     echo "    $@"
-    echo "Usage gcr \${remote to check for merged changes} \${remote to clean}"
+    echo "Usage ${fileName} \${remote to check for merged changes} \${remote to clean}"
     echo ""
-    echo "gcr origin/master hibooboo2"
+    echo "${fileName} origin/master hibooboo2"
     echo ""
     echo "Would delete all branches on hibooboo2 that have been merged to origin/master"
+    echo "Also would delete all local merged branches."
     exit 1
 fi
 
-num="`git branch --all --merged ${1}  | grep remotes/${2} | wc -l`"
+num="$[`git branch --all --merged ${1}  | grep remotes/${2} | wc -l` + `git branch --all --merged origin/master | grep -v remotes| wc -l` - 1]"
 [[ `echo ${num}` == 0 ]] && exit 0
 
 git branch --all --merged ${1}  | grep remotes/${2}
-
+git branch --all --merged origin/master | grep -v remotes
 echo Delete all of these branches? \(Y/N\)
 read answer
-if [ answer == "Y" ]
+if [ "${answer}" == "Y" ]
 then
-    git branch --all --merged ${1}  | grep remotes/${2} | cut -d / -f 3 | xargs -L 1 git push --no-verify --delete ${2}
+    branches="`git branch --all --merged ${1}  | grep remotes/${2} | cut -d / -f 3`"
+    for i in ${branches}
+    do
+        git push --no-verify --delete ${2} ${i} &
+    done
+
+    totalLines=`git branch --all --merged origin/master | grep -v remotes| wc -l`
+    branches=`git branch --all --merged origin/master | grep -v remotes | tail -n $[totalLines - 1]`
+    for i in ${branches}
+    do
+        git branch -d ${i}
+    done
 else
     echo No branches deleted.
 fi
