@@ -3,7 +3,23 @@
 set -ex
 
 : ${MYSCRPITS:=${HOME}/scripts}
+
+function ifInstall() {
+    if [ ! -z "$(which apt-get)" ]
+    then
+        if [ -z $(which ${1}) ]
+        then
+            apt-get -q -y install ${1}
+        fi
+    fi
+}
+
+ifInstall jq
+ifInstall vim
+ifInstall git
+
 [[ -z $(which git) ]] && echo You need git installed! && exit 1
+
 if [ -d "${MYSCRPITS}" ]
 then
     pushd ${MYSCRPITS}
