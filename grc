@@ -15,16 +15,16 @@ fi
 
 
 num="$[`git branch --all --merged ${1}  | grep remotes/${2} | wc -l` + `git branch --all --merged ${1} | grep -v remotes| wc -l`]"
-[[ `echo ${num}` == 0 ]] && exit 0
+[[ `echo ${num}` == 0 ]] && echo No Branches need cleaning. && exit 0
 
 git branch --all --merged ${1}  | grep remotes/${2}
-git branch --all --merged ${1} | grep -v remotes
+git branch --all --merged ${1} | grep -v remotes | grep -v \*
 echo Delete all of these branches? \(Y/N\)
 read answer
 if [ "${answer}" == "Y" ]
 then
     remoteBranches="`git branch --all --merged ${1}  | grep remotes/${2} | cut -d / -f 3`"
-    localBranches=$(git branch --all --merged ${1} | grep -v remotes)
+    localBranches=$(git branch --all --merged ${1} | grep -v remotes | grep -v \*)
     for i in ${remoteBranches}
     do
         git push --no-verify --delete ${2} ${i} &

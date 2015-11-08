@@ -303,12 +303,16 @@ create_slaves() {
 
 delete_cluster(){
     nodes =$(docker-machine ls| grep ${DCE_CLUSTER_NAME} | cut -d " " -f 1)
-    
+    for i in nodes;
+        do
+            docker-machine rm ${i}
+        done
+
 }
 build_cluster()
 {
     CLUSTER_EXISTS=$(docker-machine ls | grep ${DCE_CLUSTER_NAME} | cut -d " " -f 1| wc -l)
-    [[ ! -z "${CLUSTER_EXISTS}" && "${DELETE_CLUSTER}" != "true" ]] && echo Cluster already exists with ${CLUSTER_EXISTS} nodes && exit 1
+    [[ "${CLUSTER_EXISTS}" != "0" && "${DELETE_CLUSTER}" != "true" ]] && echo Cluster already exists with ${CLUSTER_EXISTS} nodes && exit 1
     [[ "${DELETE_CLUSTER}" == "true" ]] && delete_cluster
     if [ -z "${CLUSTER_EXISTS}" ]; then
         create_master
