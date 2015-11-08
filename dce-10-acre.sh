@@ -43,6 +43,7 @@ dce-10-acre.sh flags:
     -h(host api version)
     -u(ui version)
     -n(node agent version)
+    -N(Cluster name)
     -b(build tools version)
     -H(show Long usage\help)
     -q(silent mode)
@@ -124,6 +125,7 @@ startBuildMaster() {
         -e BUILD_TOOLS_REPO=$BUILD_TOOLS_REPO \
         -e BUILD_TOOLS_COMMIT=$BUILD_TOOLS_COMMIT \
         -e CATTLE_UI_URL=$CATTLE_UI_URL \
+        --privileged \
         rancher/build-master
 }
 
@@ -135,8 +137,11 @@ DCE_CLUSTER_NAME=`whoami`
 DCE_RUN="false"
 DCE_SKIP_CHECK="false"
 DCE_SLAVES=3
-while getopts ":M:m:C:c:v:p:h:u:n:b:s:HDqVfD" opt; do
+while getopts ":M:m:C:c:v:p:h:u:n:b:s:HDqVfdN:" opt; do
     case $opt in
+        N)
+            DCE_CLUSTER_NAME=$OPTARG
+            ;;
         M)
             isNum $OPTARG
             DCE_MASTER_MEM=$OPTARG
@@ -229,12 +234,6 @@ while getopts ":M:m:C:c:v:p:h:u:n:b:s:HDqVfD" opt; do
         *)
             myEcho Missing arg for param -$OPTARG
             showShortHelp
-            exit 1
-            ;;
-        :)
-            myEcho What happened
-            showShortHelp
-            exit 1
             ;;
     esac
     DCE_NO_FLAGS="true"
@@ -247,10 +246,23 @@ then
     [[ "$ANS" != "Y" ]] && myEcho exiting && exit 202
 fi
 
+
+get_master_ip() {
+    echo $(docker-machine ip "${DCE_CLUSTER_NAME}-master")
+}
+
+get_project_id()
+{
+    echo $(curl -s -X GET http://$(get_master_ip)/v1/projects|python -c'import json,sys;print(json.load(sys.stdin)["data"][0]["id"])')
+}
 create_reg_tokens() # Signature: rancher_server_ip
 {
-    project_id=$(curl -s -X GET http://${1}:8080/v1/projects|python -c'import json,sys;print(json.load(sys.stdin)["data"][0]["id"])')
-    echo $(curl -s -X POST http://${1}:8080/v1/projects/${project_id}/registrationtokens|python -c'import json,sys; print(json.load(sys.stdin)["links"]["self"])')
+    echo $(curl -s -X POST http://$(get_master_ip)/v1/projects/$(get_project_id)/registrationtokens|python -c'import json,sys; print(json.load(sys.stdin)["links"]["self"])')
+}
+
+get_total_project_hosts()
+{
+    echo $(curl -s http://$(get_master_ip)/v1/projects/$(get_project_id)/hosts|python -c'import json,sys; print(len(json.load(sys.stdin).items()[5][1]))')
 }
 
 get_reg_url()
@@ -260,10 +272,6 @@ get_reg_url()
     reg_tokens_link=$(create_reg_tokens ${1})
     sleep 2
     echo $(curl -s -X GET $reg_tokens_link|python -c'import json,sys; print(json.load(sys.stdin)["registrationUrl"])')
-}
-
-get_master_ip() {
-    echo $(docker-machine ip "${DCE_CLUSTER_NAME}-master")
 }
 
 get_run_cmd()
@@ -283,7 +291,7 @@ create_master(){
         --virtualbox-memory "${DCE_MASTER_MEM}" --virtualbox-no-share "${DCE_CLUSTER_NAME}-master"
     allEnv
     docker-machine scp /tmp/envVars "${DCE_CLUSTER_NAME}-master":/tmp/envVars
-    docker-machine ssh "${DCE_CLUSTER_NAME}-master" ". /tmp/envVars;$(typset -f startBuildMaster);startBuildMaster"
+    docker-machine ssh "${DCE_CLUSTER_NAME}-master" ". /tmp/envVars;$(typeset -f startBuildMaster);startBuildMaster"
     myEcho Master created.
 }
 
@@ -302,8 +310,8 @@ create_slaves() {
 }
 
 delete_cluster(){
-    nodes =$(docker-machine ls| grep ${DCE_CLUSTER_NAME} | cut -d " " -f 1)
-    for i in nodes;
+    nodes=$(docker-machine ls| grep ${DCE_CLUSTER_NAME} | cut -d " " -f 1)
+    for i in ${nodes};
         do
             docker-machine rm ${i}
         done
@@ -314,27 +322,36 @@ build_cluster()
     CLUSTER_EXISTS=$(docker-machine ls | grep ${DCE_CLUSTER_NAME} | cut -d " " -f 1| wc -l)
     [[ "${CLUSTER_EXISTS}" != "0" && "${DELETE_CLUSTER}" != "true" ]] && echo Cluster already exists with ${CLUSTER_EXISTS} nodes && exit 1
     [[ "${DELETE_CLUSTER}" == "true" ]] && delete_cluster
-    if [ -z "${CLUSTER_EXISTS}" ]; then
+    CLUSTER_EXISTS=$(docker-machine ls | grep ${DCE_CLUSTER_NAME} | cut -d " " -f 1| wc -l)
+    if [ "${CLUSTER_EXISTS}" == 0 ]; then
         create_master
         IP=$(get_master_ip)
         echo -n "Waiting for server to start "
         while sleep 3; do
-            if [ "$(curl -s http://${IP}:8080/ping)" = "pong" ]; then
+            if [ "$(curl -s http://${IP}/ping)" = "pong" ]; then
                 echo Success
                 break
             fi
             echo -n "."
         done
-    fi
-    if [ "${INSTANCE_COUNT}" -gt "0" ]; then
         create_slaves
+        while sleep 3; do
+            if [ "$(get_total_project_hosts)" == "3" ]; then
+                #Slack
+                echo 3 HOSTS found.
+                break
+            fi
+        done
+        exit 0
+    else
+        echo Cluster exists still, or existed and didn\'t delete
+        exit 69
     fi
 }
 
  main() {
-    [[ ! -z "${DCE_SLAVES}" ]] && build_cluster && exit 0
+    [[ ! -z "${DCE_SLAVES}" ]] && build_cluster
     showUsage
-    exit 0
  }
 
  main
