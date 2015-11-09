@@ -76,7 +76,12 @@ function addAlias(){
 
 function ccat(){
     [[ -z "$(which highlight)" ]] && cat ${1}
-    highlight --force -O ansi -i ${1}
+    if [ ! -z "less" ]
+    then
+        highlight --force -O ansi -i ${1} | less -r
+    else
+        highlight --force -O ansi -i ${1}
+    fi
 }
 #redefine pushd and popd so they don't output the directory stack
 pushd()
