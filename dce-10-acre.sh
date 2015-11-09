@@ -2,60 +2,136 @@
 #Add short help
 #Add rest of usage
 # ping slack that all nodes are up and running.
-VERBOSE_MODE="false"
-myEcho(){
-    if [ "$VERBOSE_MODE" == "true" ]
+DCE_NAME=`basename "$0"`
+DCE_INSTALLED=$(which ${DCE_NAME})
+
+show_usage(){
+    cat 1>&2 <<EOF
+${DCE_NAME} Usage:
+    -M - Memory for master node default:2048
+        Needs to be im MB ex: -M 4096
+
+    -m - Memory for slave nodes default:1024
+        Needs to be im MB ex: -M 4096
+
+    -C Number of cores to use for the master node (If drive supports this.)
+        Needs to be a number ex: -C 4
+
+    -c Number of cores to use for the slave nodes (If drive supports this.)
+        Needs to be a number ex: -c 4
+
+    -v Specify cattle version in format {githubUser}/{branch/tag/commitSha}
+        ex:
+            ${DCE_NAME} -v rancher/v0.106.0
+            ${DCE_NAME} -v rancher/56744ac585f5e0aa39ef7568a08049d305cdea05
+            ${DCE_NAME} -v rancher/master
+
+    -p Similar to -v but for Python agent version.
+        ex:
+            ${DCE_NAME} -p rancher/v0.59.0
+            ${DCE_NAME} -p rancher/304646088882dee48f34b330a0182bfe96cec4fd
+            ${DCE_NAME} -p rancher/master
+
+    -H Similar to -v but for Host api version.
+
+    -u Similar to -v but for Ui version.
+
+    -n Similar to -v but for Node agent version.
+
+    -b Similar to -v but for build tools version.
+
+    -N Name of the cluster
+        ex: ${DCE_NAME} -N rancher-test-cluster
+        Master has -master appended and Nodes/slaves have -slave appended.
+
+    -h / --help Show this help dialogue.
+        ex: ${DCE_NAME} -h
+
+    -V Verbose output. This will display extra text to tell user what is going on while running.
+        ex: -V
+        Use flag twice to output messages using random colors per line.
+        ex: -VV or -V {some other flags} -V
+
+    -f Run with no confirm using all defaults.
+
+    -q Run quietly. Meaning set +o
+
+Example usage:
+    All defaults: virtual box with 1 master 4 cores 2048 mb ram 3 slaves 2 cores 1096 mb
+    ram master for all components from rancher.
+        ${DCE_NAME} -f
+        or
+        ${DCE_NAME} -C 4 -M 2048 -c 2 -m 1024 -s 3
+
+EOF
+}
+
+# check whether user had supplied -h or --help . If yes display usage
+if [[ ( $# == "--help") ||  $# == "-h" ]]
+then
+    if [ -z "${DCE_INSTALLED}" ]
     then
-        echo $(tput setaf $(echo $((RANDOM%7+1)))) ${@} $(tput sgr0)
+        echo ${DCE_NAME} is not installed on your system.
+        echo Thought you should know.
+    else
+        echo ${DCE_NAME} is installed. To run just type: ${DCE_NAME}
+    fi
+    show_usage
+    exit 0
+fi
+
+VERBOSE_MODE="false"
+
+myEcho(){
+    if [ "${VERBOSE_MODE}" == "true" ]
+    then
+        if [ "${USE_RANDOM_COLORS}" == "true" ]
+        then
+            echo $(tput setaf $(echo $((RANDOM%7+1)))) ${@} $(tput sgr0)
+        else
+            echo ${@}
+        fi
     fi
 }
+
 isNum() {
     re='^[0-9]+$'
     if ! [[ ${1} =~ $re ]] ; then
         myEcho "${1} is not a valid number" >&2; showShortHelp; exit 3
     fi
 }
+
 isValidRepoCommit() {
     local SUPPLIED=${1}
     arrIN=(${SUPPLIED//// })
     [[ -z "${arrIN[0]}" || -z "${arrIN[1]}" ]] && myEcho ${1} is not a proper \{githubUser\}/\{git\|commit/tag/branch\} && exit 4
     return 0
 }
-showUsage(){
-    cat 1>&2 <<EOF
-dce-10-acre.sh Usage:
-    -M - Memory for master node default:2048
-        Needs to be im MB ex: -M 4096
-    -m - Memory for slave nodes default:1024
-        Needs to be im MB ex: -M 4096
-
-
-EOF
-}
 
 showShortHelp(){
     cat 1>&2 <<EOF
-dce-10-acre.sh flags:
+${DCE_NAME} flags:
     -M(Master Memory) -m(slave memory)
     -C(Master cores) -c(slave cores)
     -v(cattle version)
     -p(python agent version)
-    -h(host api version)
+    -H(host api version)
     -u(ui version)
     -n(node agent version)
     -N(Cluster name)
     -b(build tools version)
-    -H(show Long usage\help)
-    -q(silent mode)
+    -h / --help (show Long usage\help)
     -f(force run without other options. EG: use all defaults. Only needed if no other flags defined.)
+    -q(silent/ quiet)
 
 Minimal command to use all defaults:
-    dce-10-acre.sh -f
+    ${DCE_NAME} -f
     Using above command will yield 4 machines 1 master 3 slaves where the slaves have 1GB ram 2 cores
     The master will have 4 cores 2 gb of ram  and the will use plain build-master.
 EOF
 }
-allEnv(){
+
+all_env(){
     : ${CATTLE_REPO:="https://github.com/rancher/cattle.git"}
     : ${CATTLE_WORK_DIR:=cattle}
     : ${CATTLE_COMMIT:=master}
@@ -101,7 +177,8 @@ export BUILD_TOOLS_COMMIT=$BUILD_TOOLS_COMMIT
 export CATTLE_UI_URL=$CATTLE_UI_URL
 EOF
 }
-startBuildMaster() {
+
+start_build_master() {
     . /tmp/envVars
     docker run -d -p 80:8080 \
         -e CATTLE_REPO=$CATTLE_REPO \
@@ -137,7 +214,7 @@ DCE_CLUSTER_NAME=`whoami`
 DCE_RUN="false"
 DCE_SKIP_CHECK="false"
 DCE_SLAVES=3
-while getopts ":M:m:C:c:v:p:h:u:n:b:s:HDqVfdN:" opt; do
+while getopts ":M:m:C:c:v:p:H:u:n:b:s:DqVfdN:" opt; do
     case $opt in
         N)
             DCE_CLUSTER_NAME=$OPTARG
@@ -178,7 +255,7 @@ while getopts ":M:m:C:c:v:p:h:u:n:b:s:HDqVfdN:" opt; do
             myEcho Using cattle version $PYTHON_AGENT_REPO:$PYTHON_AGENT_COMMIT
             myEcho Github Web view: github.com/${arrIN[0]}/python-agent/tree/${arrIN[1]}
             ;;
-        h)
+        H)
             #Set version of hostapi. In form of {githubUser}/{commit/tag/branch}
             isValidRepoCommit $OPTARG; arrIN=(${OPTARG//// })
             HOST_API_REPO="https://github.com/${arrIN[0]}/host-api.git"
@@ -223,10 +300,14 @@ while getopts ":M:m:C:c:v:p:h:u:n:b:s:HDqVfdN:" opt; do
             showShortHelp
             exit 1
             ;;
-        H) showUsage; exit 0;;
         V)
             echo $(tput setaf 2) 'Verbose mode enabled' $(tput sgr0)
+            [[ "${VERBOSE_MODE}" == "true" ]] && USE_RANDOM_COLORS=true
             VERBOSE_MODE=true
+            set -x
+            ;;
+        q)
+            set +o
             ;;
         f)
             DCE_SKIP_CHECK="true"
@@ -289,9 +370,9 @@ create_master(){
     myEcho Starting creation of master
     docker-machine create --driver virtualbox --virtualbox-cpu-count "${DCE_MASTER_CORES}" \
         --virtualbox-memory "${DCE_MASTER_MEM}" --virtualbox-no-share "${DCE_CLUSTER_NAME}-master"
-    allEnv
+    all_env
     docker-machine scp /tmp/envVars "${DCE_CLUSTER_NAME}-master":/tmp/envVars
-    docker-machine ssh "${DCE_CLUSTER_NAME}-master" ". /tmp/envVars;$(typeset -f startBuildMaster);startBuildMaster"
+    docker-machine ssh "${DCE_CLUSTER_NAME}-master" ". /tmp/envVars;$(typeset -f start_build_master);start_build_master"
     myEcho Master created.
 }
 
@@ -351,7 +432,7 @@ build_cluster()
 
  main() {
     [[ ! -z "${DCE_SLAVES}" ]] && build_cluster
-    showUsage
+    show_usage
  }
 
  main
