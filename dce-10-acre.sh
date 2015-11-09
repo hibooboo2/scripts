@@ -214,7 +214,7 @@ DCE_CLUSTER_NAME=`whoami`
 DCE_RUN="false"
 DCE_SKIP_CHECK="false"
 DCE_SLAVES=3
-while getopts ":M:m:C:c:v:p:H:u:n:b:s:DqVfdN:" opt; do
+while getopts ":M:m:C:c:v:p:H:u:n:b:s:DqhVfdN:" opt; do
     case $opt in
         N)
             DCE_CLUSTER_NAME=$OPTARG

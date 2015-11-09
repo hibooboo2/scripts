@@ -107,6 +107,10 @@ alias myscripts="cd $MYSCRIPTS"
 alias del="rm -rf"
 alias home="cd ~"
 alias sand="mkdir -p ~/sandbox; cd ~/sandbox"
+
+#Always keep color with less.
+alias less="less -r"
+
 if [ "$(uname)" == 'Linux' ]; then
     alias ls='ls -t -A -p -h -F --color=auto'
     shopt -s autocd 2&>1 /dev/null
