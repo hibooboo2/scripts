@@ -411,24 +411,33 @@ build_cluster()
     [[ "${DELETE_CLUSTER}" == "true" ]] && delete_cluster
     CLUSTER_EXISTS=$(docker-machine ls | grep ${DCE_CLUSTER_NAME} | cut -d " " -f 1| wc -l)
     if [ "${CLUSTER_EXISTS}" == 0 ]; then
+        start=$(date -u +"%s")
         create_master
         IP=$(get_master_ip)
         echo -n "Waiting for server to start "
         while sleep 3; do
             if [ "$(curl -s http://${IP}/ping)" = "pong" ]; then
-                echo Success
+                master=$(date -u +"%s")
                 break
             fi
             echo -n "."
         done
         create_slaves
+        echo
+        echo -n "Waiting for slaves to register "
         while sleep 3; do
             if [ "$(get_total_project_hosts)" == "3" ]; then
                 #Slack
+                all_slaves=$(date -u +"%s")
                 echo 3 HOSTS found.
                 break
             fi
+            echo -n "."
         done
+        diff=$(($master-$start))
+        echo "$(($diff / 60)) minutes and $(($diff % 60)) seconds elapsed to create master and start rancher."
+        diff=$(($all_slaves-$master))
+        echo "$(($diff / 60)) minutes and $(($diff % 60)) seconds elapsed to create slaves and get them all in rancher."
         exit 0
     else
         echo Cluster exists still, or existed and didn\'t delete
