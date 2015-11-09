@@ -50,7 +50,7 @@ ${DCE_NAME} Usage:
 
     -V Verbose output. This will display extra text to tell user what is going on while running.
         ex: -V
-        Use flag twice to output messages using random colors per line.
+        Use flag twice to output messages using random colors per line. And set -x
         ex: -VV or -V {some other flags} -V
 
     -f Run with no confirm using all defaults.
@@ -304,9 +304,8 @@ while getopts ":M:m:C:c:v:p:H:u:n:b:s:DqhVfdN:" opt; do
             ;;
         V)
             echo $(tput setaf 2) 'Verbose mode enabled' $(tput sgr0)
-            [[ "${VERBOSE_MODE}" == "true" ]] && USE_RANDOM_COLORS=true
+            [[ "${VERBOSE_MODE}" == "true" ]] && USE_RANDOM_COLORS=true && set -x
             VERBOSE_MODE=true
-            set -x
             ;;
         q)
             set +o
