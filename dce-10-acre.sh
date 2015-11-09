@@ -5,8 +5,9 @@
 DCE_NAME=`basename "$0"`
 DCE_INSTALLED=$(which ${DCE_NAME})
 
-show_usage(){
-    cat 1>&2 <<EOF
+show_usage()
+{
+    cat 1>&2 <<EOF > /tmp/${DCE_NAME}-usage.txt
 ${DCE_NAME} Usage:
     -M - Memory for master node default:2048
         Needs to be im MB ex: -M 4096
@@ -64,10 +65,11 @@ Example usage:
         ${DCE_NAME} -C 4 -M 2048 -c 2 -m 1024 -s 3
 
 EOF
+cat /tmp/${DCE_NAME}-usage.txt | less
 }
-
+echo ${@}
 # check whether user had supplied -h or --help . If yes display usage
-if [[ ( $# == "--help") ||  $# == "-h" ]]
+if [[ ( ${@} == *"--help") ||  ${@} == *"-h" ]]
 then
     if [ -z "${DCE_INSTALLED}" ]
     then
@@ -97,7 +99,7 @@ myEcho(){
 isNum() {
     re='^[0-9]+$'
     if ! [[ ${1} =~ $re ]] ; then
-        myEcho "${1} is not a valid number" >&2; showShortHelp; exit 3
+        myEcho "${1} is not a valid number" >&2; show_short_help; exit 3
     fi
 }
 
@@ -108,7 +110,7 @@ isValidRepoCommit() {
     return 0
 }
 
-showShortHelp(){
+show_short_help(){
     cat 1>&2 <<EOF
 ${DCE_NAME} flags:
     -M(Master Memory) -m(slave memory)
@@ -127,7 +129,7 @@ ${DCE_NAME} flags:
 Minimal command to use all defaults:
     ${DCE_NAME} -f
     Using above command will yield 4 machines 1 master 3 slaves where the slaves have 1GB ram 2 cores
-    The master will have 4 cores 2 gb of ram  and the will use plain build-master.
+    The master will have 4 cores 2 gb of ram  and the will use plain build-master with virtualbox driver.
 EOF
 }
 
@@ -297,7 +299,7 @@ while getopts ":M:m:C:c:v:p:H:u:n:b:s:DqhVfdN:" opt; do
             ;;
         \?)
             echo "Invalid option: -$OPTARG" >&2
-            showShortHelp
+            show_short_help
             exit 1
             ;;
         V)
@@ -314,12 +316,17 @@ while getopts ":M:m:C:c:v:p:H:u:n:b:s:DqhVfdN:" opt; do
             ;;
         *)
             myEcho Missing arg for param -$OPTARG
-            showShortHelp
+            show_short_help
+            exit 1
+            ;;
+        h)
+            show_usage
+            exit 0
             ;;
     esac
     DCE_NO_FLAGS="true"
 done
-[[ -z "${DCE_NO_FLAGS}" ]] && showShortHelp && exit 1
+[[ -z "${DCE_NO_FLAGS}" ]] && show_short_help && exit 1
 if [ "${DCE_SKIP_CHECK}" == "false" ]
 then
     myEcho Are these options correct? \(Y/N\)
