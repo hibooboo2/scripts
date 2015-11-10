@@ -1,6 +1,6 @@
 #!/bin/bash
 export SHORT_OPTS="abc:de:f-:"
-export LONG_OPTS="good;great:;flag-arg:;flag-no-arg;"
+export LONG_OPTS="[good][great]:[flag-arg]:[flag-no-arg]"
 
 
 ./getOptsLongArgs.sh --fail
