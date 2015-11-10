@@ -4,9 +4,10 @@
 # ping slack that all nodes are up and running.
 DCE_NAME=`basename "$0"`
 DCE_INSTALLED=$(which ${DCE_NAME})
+VERBOSE_MODE="true"
 
 SHORT_FLAGS=":M:m:C:c:v:p:H:u:n:b:s:DqhVfdN:h-:"
-LONG_FLAGS="help;delete;delete-only;cattle-version:;"
+LONG_FLAGS="[help][delete][delete-only][cattle-version]:"
 
 show_usage()
 {
@@ -86,8 +87,6 @@ EOF
 cat /tmp/${DCE_NAME}-usage.txt | less
 }
 
-VERBOSE_MODE="true"
-
 myEcho(){
     if [ "${VERBOSE_MODE}" == "true" ]
     then
@@ -145,26 +144,6 @@ Minimal command to use all defaults:
 EOF
 }
 
-is_valid_long_flag(){
-    if [[ ${LONG_FLAGS} == *${1}\;* || ${LONG_FLAGS} == *${1}:\;* ]]
-    then
-        return
-    else
-        echo $(tput setaf 1) --${1} is not valid long flag. $(tput sgr0)
-        show_short_help
-        exit 1
-    fi
-}
-
-need_arg(){
-    if [[ ${LONG_FLAGS} == *${1}:* ]]
-    then
-        echo true
-    else
-        echo false
-    fi
-}
-
 long_args(){
     #ADD support for long flags.
     #To use just call this function at the begining of the use of getopts before your case statement.
@@ -173,57 +152,48 @@ long_args(){
     #and pass in as a var or arg. So I chose arg.
     if [ "$opt" == "-" ]
     then
+        #Uncomment line to print current flag before processing
+        #echo  $(tput setaf 3) OPTARG: $OPTARG$(tput sgr0)
         opt=$OPTARG
         FLAG_TYPE="--"
-
-        if [[ $OPTARG == *=* ]]
+        echo OPT:${opt}
+        echo 1:${1}
+        if [[ ${opt} = *=* ]]
         then
+            echo Using = approch.
+            FLAG=$(echo ${opt} |cut -f 1 -d "=")
 
-            EQUALS_USED="true"
-            FLAG=$(echo ${OPTARG} |cut -f 1 -d "=")
-            is_valid_long_flag ${FLAG}
-            NEED_ARG=$(need_arg ${FLAG})
-            [[ ${NEED_ARG} == "false" ]] && echo $(tput setaf 1) Flag: --${FLAG} doesn\'t take an argument $(tput sgr0) && show_short_help && exit 1
+            [[ ${LONG_FLAGS} != *\[${FLAG}\]* ]] && echo "$(tput setaf 1) Flag: --${FLAG} is not a valid flag $(tput sgr0)" && exit 1
+            [[ ${LONG_FLAGS} != *\[${FLAG}\]:* ]] && echo "$(tput setaf 1) Flag: --${FLAG} doesn\'t take an argument $(tput sgr0)" && exit 1
 
-        else
-
-            EQUALS_USED="false"
-            is_valid_long_flag ${OPTARG}
-            NEED_ARG=$(need_arg ${OPTARG})
-
-        fi
-
-        if [ ${EQUALS_USED} == "true" ]
-        then
-            val=${OPTARG#*=}
-            opt=${OPTARG%=${val}}
+            val=${opt#*=}
+            opt=${opt%=${val}}
             OPTARG=${val}
 
+        elif [[ ${LONG_FLAGS} = *\[${opt}\]:* ]]
+        then
+            echo Using --long-flag arg1
+            OPTARG="${1}"
+            [[ -z ${OPTARG} ]] && echo $(tput setaf 1) --${opt} requires an Argument. $(tput sgr0) && exit 1
+            [[ ${OPTARG} = -* ]] && echo $(tput setaf 1) --${opt} requires an Argument. $(tput sgr0) && exit 1
+            OPTIND=$(( $OPTIND + 1 ))
+
+        elif  [[ ${LONG_FLAGS} = *\[${opt}\]* ]]
+        then
+            echo No args --long-flag
+            OPTARG=
+
         else
-
-            if [ "${NEED_ARG}" == "true" ]
-            then
-
-                OPTARG="${1}"
-                [[ -z ${OPTARG} ]] && echo $(tput setaf 1) --${opt} requires an Argument. $(tput sgr0) && show_short_help && exit 1
-                [[ ${OPTARG} = -* ]] && echo $(tput setaf 1) --${opt} requires an Argument. $(tput sgr0) && show_short_help && exit 1
-                OPTIND=$(( $OPTIND + 1 ))
-
-            else
-                OPTARG=
-            fi
-
+            echo $(tput setaf 1) Flag: --${opt} is not a valid flag $(tput sgr0)
+            exit 1
         fi
-
+        #End support for long flags. now opt can use cases that are words.
+        #You can use FLAG_TYPE to determine weather the called flag was long or short. - is short -- is long.
+        #Uncomment above line to display flag with arg that was just parsed.
+        # echo ${FLAG_TYPE}${opt} ${OPTARG}
     else
-
         FLAG_TYPE="-"
-
     fi
-    #End support for long flags. now opt can use cases that are words.
-    #You can use FLAG_TYPE to determine weather the called flag was long or short. - is short -- is long.
-    #echo ${FLAG_TYPE}${opt} ${OPTARG}
-    #Uncomment above line to display flag with arg that was just parsed.
 }
 
 all_env(){
@@ -447,21 +417,12 @@ get_project_id()
 }
 create_reg_tokens() # Signature: rancher_server_ip
 {
-    echo $(curl -s -X POST http://$(get_master_ip)/v1/projects/$(get_project_id)/registrationtokens|python -c'import json,sys; print(json.load(sys.stdin)["links"]["self"])')
+    echo $(curl -s -X POST http://${1}/v1/projects/$(get_project_id)/registrationtokens|python -c'import json,sys; print(json.load(sys.stdin)["links"]["self"])')
 }
 
 get_total_project_hosts()
 {
     echo $(curl -s http://$(get_master_ip)/v1/projects/$(get_project_id)/hosts|python -c'import json,sys; print(len(json.load(sys.stdin).items()[5][1]))')
-}
-
-get_reg_url()
-{
-    ## This is a bit hacky...
-    local reg_tokens_link
-    reg_tokens_link=$(create_reg_tokens ${1})
-    sleep 2
-    echo $(curl -s -X GET $reg_tokens_link|python -c'import json,sys; print(json.load(sys.stdin)["registrationUrl"])')
 }
 
 get_run_cmd()
