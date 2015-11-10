@@ -29,7 +29,8 @@ long_args(){
     #and pass in as a var or arg. So I chose arg.
     if [ "$opt" == "-" ]
     then
-        echo  $(tput setaf 3) OPTARG: $OPTARG$(tput sgr0)
+        #Uncomment line to print current flag before processing
+        #echo  $(tput setaf 3) OPTARG: $OPTARG$(tput sgr0)
         opt=$OPTARG
         FLAG_TYPE="--"
 
