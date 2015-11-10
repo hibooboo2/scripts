@@ -5,23 +5,30 @@
 DCE_NAME=`basename "$0"`
 DCE_INSTALLED=$(which ${DCE_NAME})
 
+SHORT_FLAGS=":M:m:C:c:v:p:H:u:n:b:s:DqhVfdN:h-:"
+LONG_FLAGS="help;delete;delete-only;cattle-version:;"
+
 show_usage()
 {
     cat 1>&2 <<EOF > /tmp/${DCE_NAME}-usage.txt
 ${DCE_NAME} Usage:
     -M - Memory for master node default:2048
         Needs to be im MB ex: -M 4096
+        \$DCE_MASTER_MEM
 
     -m - Memory for slave nodes default:1024
         Needs to be im MB ex: -M 4096
+        \$DCE_SLAVE_MEM
 
     -C Number of cores to use for the master node (If drive supports this.)
         Needs to be a number ex: -C 4
+        \$DCE_MASTER_CORES
 
     -c Number of cores to use for the slave nodes (If drive supports this.)
         Needs to be a number ex: -c 4
+        \$DCE_SLAVE_CORES
 
-    -v Specify cattle version in format {githubUser}/{branch/tag/commitSha}
+    -v | --cattle-version Specify cattle version in format {githubUser}/{branch/tag/commitSha}
         ex:
             ${DCE_NAME} -v rancher/v0.106.0
             ${DCE_NAME} -v rancher/56744ac585f5e0aa39ef7568a08049d305cdea05
@@ -44,6 +51,8 @@ ${DCE_NAME} Usage:
     -N Name of the cluster
         ex: ${DCE_NAME} -N rancher-test-cluster
         Master has -master appended and Nodes/slaves have -slave appended.
+        Default cluster name is grabbed from whoami
+        \$DCE_CLUSTER_NAME
 
     -h / --help Show this help dialogue.
         ex: ${DCE_NAME} -h
@@ -57,6 +66,15 @@ ${DCE_NAME} Usage:
 
     -q Run quietly. Meaning set +o
 
+    -d | --delete Delete the cluster if it already exists.
+        ex: ${DCE_NAME}
+        \$DCE_DELETE_CLUSTER
+    -D | --delete-only Delete the cluster if it already exists. Then exit. (Preempts other flags.)
+        When used no other commands will occur. Cluster will just be deleted.
+        ex: ${DCE_NAME}
+        \$DCE_DELETE_ONLY
+
+
 Example usage:
     All defaults: virtual box with 1 master 4 cores 2048 mb ram 3 slaves 2 cores 1096 mb
     ram master for all components from rancher.
@@ -67,22 +85,8 @@ Example usage:
 EOF
 cat /tmp/${DCE_NAME}-usage.txt | less
 }
-echo ${@}
-# check whether user had supplied -h or --help . If yes display usage
-if [[ ( ${@} == *"--help") ||  ${@} == *"-h" ]]
-then
-    if [ -z "${DCE_INSTALLED}" ]
-    then
-        echo ${DCE_NAME} is not installed on your system.
-        echo Thought you should know.
-    else
-        echo ${DCE_NAME} is installed. To run just type: ${DCE_NAME}
-    fi
-    show_usage
-    exit 0
-fi
 
-VERBOSE_MODE="false"
+VERBOSE_MODE="true"
 
 myEcho(){
     if [ "${VERBOSE_MODE}" == "true" ]
@@ -107,6 +111,12 @@ isValidRepoCommit() {
     local SUPPLIED=${1}
     arrIN=(${SUPPLIED//// })
     [[ -z "${arrIN[0]}" || -z "${arrIN[1]}" ]] && myEcho ${1} is not a proper \{githubUser\}/\{git\|commit/tag/branch\} && exit 4
+    EXISTS=$(curl -s -L github.com/${arrIN[0]}/cattle/tree/${arrIN[1]})
+    if [[ ${EXISTS} == *"Not Found"* ]]
+    then
+        echo ${SUPPLIED} not found on github.
+        exit 5
+    fi
     return 0
 }
 
@@ -115,22 +125,105 @@ show_short_help(){
 ${DCE_NAME} flags:
     -M(Master Memory) -m(slave memory)
     -C(Master cores) -c(slave cores)
-    -v(cattle version)
+    -v | --cattle-version (cattle version)
     -p(python agent version)
     -H(host api version)
     -u(ui version)
     -n(node agent version)
     -N(Cluster name)
     -b(build tools version)
-    -h / --help (show Long usage\help)
+    -h | --help (show Long usage\help)
     -f(force run without other options. EG: use all defaults. Only needed if no other flags defined.)
     -q(silent/ quiet)
+    -d | --delete(delete existing cluster if it exists.)
+    -D | --delete-only(Only delete existing cluster if it exists.)
 
 Minimal command to use all defaults:
     ${DCE_NAME} -f
     Using above command will yield 4 machines 1 master 3 slaves where the slaves have 1GB ram 2 cores
     The master will have 4 cores 2 gb of ram  and the will use plain build-master with virtualbox driver.
 EOF
+}
+
+is_valid_long_flag(){
+    if [[ ${LONG_FLAGS} == *${1}\;* || ${LONG_FLAGS} == *${1}:\;* ]]
+    then
+        return
+    else
+        echo $(tput setaf 1) --${1} is not valid long flag. $(tput sgr0)
+        show_short_help
+        exit 1
+    fi
+}
+
+need_arg(){
+    if [[ ${LONG_FLAGS} == *${1}:* ]]
+    then
+        echo true
+    else
+        echo false
+    fi
+}
+
+long_args(){
+    #ADD support for long flags.
+    #To use just call this function at the begining of the use of getopts before your case statement.
+    #Be sure to pass in the value of ${!OPTIND} ex: long_args "${!OPTIND}"
+    #Not sure why but cannot call ${!OPTIND} from within the function and get correct value so Must do It before hand
+    #and pass in as a var or arg. So I chose arg.
+    if [ "$opt" == "-" ]
+    then
+        opt=$OPTARG
+        FLAG_TYPE="--"
+
+        if [[ $OPTARG == *=* ]]
+        then
+
+            EQUALS_USED="true"
+            FLAG=$(echo ${OPTARG} |cut -f 1 -d "=")
+            is_valid_long_flag ${FLAG}
+            NEED_ARG=$(need_arg ${FLAG})
+            [[ ${NEED_ARG} == "false" ]] && echo $(tput setaf 1) Flag: --${FLAG} doesn\'t take an argument $(tput sgr0) && show_short_help && exit 1
+
+        else
+
+            EQUALS_USED="false"
+            is_valid_long_flag ${OPTARG}
+            NEED_ARG=$(need_arg ${OPTARG})
+
+        fi
+
+        if [ ${EQUALS_USED} == "true" ]
+        then
+            val=${OPTARG#*=}
+            opt=${OPTARG%=${val}}
+            OPTARG=${val}
+
+        else
+
+            if [ "${NEED_ARG}" == "true" ]
+            then
+
+                OPTARG="${1}"
+                [[ -z ${OPTARG} ]] && echo $(tput setaf 1) --${opt} requires an Argument. $(tput sgr0) && show_short_help && exit 1
+                [[ ${OPTARG} = -* ]] && echo $(tput setaf 1) --${opt} requires an Argument. $(tput sgr0) && show_short_help && exit 1
+                OPTIND=$(( $OPTIND + 1 ))
+
+            else
+                OPTARG=
+            fi
+
+        fi
+
+    else
+
+        FLAG_TYPE="-"
+
+    fi
+    #End support for long flags. now opt can use cases that are words.
+    #You can use FLAG_TYPE to determine weather the called flag was long or short. - is short -- is long.
+    #echo ${FLAG_TYPE}${opt} ${OPTARG}
+    #Uncomment above line to display flag with arg that was just parsed.
 }
 
 all_env(){
@@ -216,32 +309,36 @@ DCE_CLUSTER_NAME=`whoami`
 DCE_RUN="false"
 DCE_SKIP_CHECK="false"
 DCE_SLAVES=3
-while getopts ":M:m:C:c:v:p:H:u:n:b:s:DqhVfdN:" opt; do
+while getopts "${SHORT_FLAGS}" opt; do
+
+    long_args "${!OPTIND}"
+
     case $opt in
+        \?)
+            echo "Invalid option: -$OPTARG" >&2
+            show_short_help
+            exit 1
+            ;;
         N)
             DCE_CLUSTER_NAME=$OPTARG
             ;;
         M)
             isNum $OPTARG
             DCE_MASTER_MEM=$OPTARG
-            myEcho Master use $OPTARG MB ram
             ;;
         m)
             isNum $OPTARG
             DCE_SLAVE_MEM=$OPTARG
-            myEcho Slaves use $OPTARG MB ram
             ;;
         C)
             isNum $OPTARG
             DCE_MASTER_CORES=$OPTARG
-            myEcho Master use $OPTARG cores
             ;;
         c)
             isNum $OPTARG
             DCE_SLAVE_CORES=$OPTARG
-            myEcho Slaves use $OPTARG cores
             ;;
-        v)
+        v | cattle-version)
             #Set version of cattle. In form of {githubUser}/{commit/tag/branch}
             isValidRepoCommit $OPTARG; arrIN=(${OPTARG//// })
             CATTLE_REPO="https://github.com/${arrIN[0]}/cattle.git"
@@ -292,15 +389,13 @@ while getopts ":M:m:C:c:v:p:H:u:n:b:s:DqhVfdN:" opt; do
         s)
             isNum $OPTARG
             DCE_SLAVES=$OPTARG
-            myEcho Use $OPTARG Slave nodes
             ;;
-        d)
-            DELETE_CLUSTER="true"
+        d | delete)
+            DCE_DELETE_CLUSTER="true"
             ;;
-        \?)
-            echo "Invalid option: -$OPTARG" >&2
-            show_short_help
-            exit 1
+        D | delete-only)
+            DCE_DELETE_CLUSTER="true"
+            DCE_DELETE_ONLY="true"
             ;;
         V)
             echo $(tput setaf 2) 'Verbose mode enabled' $(tput sgr0)
@@ -308,19 +403,26 @@ while getopts ":M:m:C:c:v:p:H:u:n:b:s:DqhVfdN:" opt; do
             VERBOSE_MODE=true
             ;;
         q)
-            set +o
+            VERBOSE_MODE=false
             ;;
         f)
             DCE_SKIP_CHECK="true"
+            ;;
+        h | help)
+            if [ -z "${DCE_INSTALLED}" ]
+            then
+                echo ${DCE_NAME} is not installed on your system.
+                echo Thought you should know.
+            else
+                echo ${DCE_NAME} is installed. To run just type: ${DCE_NAME}
+            fi
+            show_usage
+            exit 0
             ;;
         *)
             myEcho Missing arg for param -$OPTARG
             show_short_help
             exit 1
-            ;;
-        h)
-            show_usage
-            exit 0
             ;;
     esac
     DCE_NO_FLAGS="true"
@@ -328,7 +430,8 @@ done
 [[ -z "${DCE_NO_FLAGS}" ]] && show_short_help && exit 1
 if [ "${DCE_SKIP_CHECK}" == "false" ]
 then
-    myEcho Are these options correct? \(Y/N\)
+    (set -o posix; set) | grep DCE_
+    echo $(tput setaf 3) Are these options correct? \(Y/N\) $(tput sgr0)
     read ANS
     [[ "$ANS" != "Y" ]] && myEcho exiting && exit 202
 fi
@@ -399,17 +502,18 @@ create_slaves() {
 delete_cluster(){
     nodes=$(docker-machine ls| grep ${DCE_CLUSTER_NAME} | cut -d " " -f 1)
     for i in ${nodes};
-        do
-            docker-machine rm ${i}
-        done
-
+    do
+        docker-machine rm ${i}
+    done
+    [[ "${DCE_DELETE_ONLY}" == "true" ]] && exit 0
 }
+
 build_cluster()
 {
-    CLUSTER_EXISTS=$(docker-machine ls | grep ${DCE_CLUSTER_NAME} | cut -d " " -f 1| wc -l)
-    [[ "${CLUSTER_EXISTS}" != "0" && "${DELETE_CLUSTER}" != "true" ]] && echo Cluster already exists with ${CLUSTER_EXISTS} nodes && exit 1
-    [[ "${DELETE_CLUSTER}" == "true" ]] && delete_cluster
-    CLUSTER_EXISTS=$(docker-machine ls | grep ${DCE_CLUSTER_NAME} | cut -d " " -f 1| wc -l)
+    CLUSTER_EXISTS=$(echo $(docker-machine ls | grep ${DCE_CLUSTER_NAME} | cut -d " " -f 1| wc -l))
+    [[ "${CLUSTER_EXISTS}" != "0" && "${DCE_DELETE_CLUSTER}" != "true" ]] && echo Cluster already exists with ${CLUSTER_EXISTS} nodes && exit 1
+    [[ "${DCE_DELETE_CLUSTER}" == "true" ]] && delete_cluster
+    CLUSTER_EXISTS=$(echo $(docker-machine ls | grep ${DCE_CLUSTER_NAME} | cut -d " " -f 1| wc -l))
     if [ "${CLUSTER_EXISTS}" == 0 ]; then
         start=$(date -u +"%s")
         create_master
