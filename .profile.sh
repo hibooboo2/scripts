@@ -5,6 +5,9 @@ export HISTSIZE=10000000                   # big big history
 export HISTFILESIZE=10000000000000               # big big history
 shopt -s histappend
 
+#PS4 is what is used to prepend commands executed when using set -x
+export PS4="\[\e[1;30m\] ${BASH_SOURCE}:${LINENO} ${FUNCNAME[0]:+${FUNCNAME[0]}()} > \[\e[0m\] \[\e[1;34m\]"
+
 function parse_git_branch(){
     BRANCH=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
     if [ ! "${BRANCH}" == "" ];then
