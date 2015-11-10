@@ -3,16 +3,6 @@
 : ${LONG_OPTS:="[flag]:[arg]:[flag-long][flag-longer-arg]:"}
 
 set -x
-is_valid_long_flag(){
-    if [[ ${LONG_OPTS} == *\[${1}\]* ]]
-    then
-        [[ ${LONG_OPTS} == *\[${1}\]:* ]] && NEED_ARG=true
-        [[ ${LONG_OPTS} != *\[${1}\]:* ]] && NEED_ARG=false
-    else
-        echo $(tput setaf 1) Flag: --${1} is not a valid flag $(tput sgr0)
-        exit 1
-    fi
-}
 
 long_args(){
     #ADD support for long flags.
@@ -26,40 +16,44 @@ long_args(){
         #echo  $(tput setaf 3) OPTARG: $OPTARG$(tput sgr0)
         opt=$OPTARG
         FLAG_TYPE="--"
-
-        if [ $OPTARG == *=* ]
+        echo OPT:${opt}
+        echo 1:${1}
+        if [[ ${opt} = *=* ]]
         then
+            echo Using = approch.
+            FLAG=$(echo ${opt} |cut -f 1 -d "=")
 
-            FLAG=$(echo ${OPTARG} |cut -f 1 -d "=")
-            is_valid_long_flag ${FLAG}
-            [[ ${NEED_ARG} == "false" ]] && echo $(tput setaf 1) Flag: --${FLAG} doesn\'t take an argument $(tput sgr0) && exit 1
+            [[ ${LONG_OPTS} != *\[${FLAG}\]* ]] && echo "$(tput setaf 1) Flag: --${FLAG} is not a valid flag $(tput sgr0)" && exit 1
+            [[ ${LONG_OPTS} != *\[${FLAG}\]:* ]] && echo "$(tput setaf 1) Flag: --${FLAG} doesn\'t take an argument $(tput sgr0)" && exit 1
 
-            val=${OPTARG#*=}
-            opt=${OPTARG%=${val}}
+            val=${opt#*=}
+            opt=${opt%=${val}}
             OPTARG=${val}
+
+        elif [[ ${LONG_OPTS} = *\[${opt}\]:* ]]
+        then
+            echo Using --long-flag arg1
+            OPTARG="${1}"
+            [[ -z ${OPTARG} ]] && echo $(tput setaf 1) --${opt} requires an Argument. $(tput sgr0) && exit 1
+            [[ ${OPTARG} = -* ]] && echo $(tput setaf 1) --${opt} requires an Argument. $(tput sgr0) && exit 1
+            OPTIND=$(( $OPTIND + 1 ))
+
+        elif  [[ ${LONG_OPTS} = *\[${opt}\]* ]]
+        then
+            echo No args --long-flag
+            OPTARG=
+
         else
-            is_valid_long_flag ${OPTARG}
-            if [ "${NEED_ARG}" == "true" ]
-            then
-
-                OPTARG="${1}"
-                [[ -z ${OPTARG} ]] && echo $(tput setaf 1) --${opt} requires an Argument. $(tput sgr0) && exit 1
-                [[ ${OPTARG} = -* ]] && echo $(tput setaf 1) --${opt} requires an Argument. $(tput sgr0) && exit 1
-                OPTIND=$(( $OPTIND + 1 ))
-            else
-                OPTARG=
-            fi
+            echo $(tput setaf 1) Flag: --${opt} is not a valid flag $(tput sgr0)
+            exit 1
         fi
-
+        #End support for long flags. now opt can use cases that are words.
+        #You can use FLAG_TYPE to determine weather the called flag was long or short. - is short -- is long.
+        #Uncomment above line to display flag with arg that was just parsed.
+        # echo ${FLAG_TYPE}${opt} ${OPTARG}
     else
-
         FLAG_TYPE="-"
-
     fi
-    #End support for long flags. now opt can use cases that are words.
-    #You can use FLAG_TYPE to determine weather the called flag was long or short. - is short -- is long.
-    # echo ${FLAG_TYPE}${opt} ${OPTARG}
-    #Uncomment above line to display flag with arg that was just parsed.
 }
 
 while  getopts "$SHORT_OPTS" opt; do
