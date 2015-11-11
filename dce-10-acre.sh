@@ -4,7 +4,7 @@
 # ping slack that all nodes are up and running.
 DCE_NAME=`basename "$0"`
 DCE_INSTALLED=$(which ${DCE_NAME})
-VERBOSE_MODE="true"
+VERBOSE_MODE="false"
 
 SHORT_FLAGS=":M:m:C:c:v:p:H:u:n:b:s:DqhVfdN:h-:"
 LONG_FLAGS="[help][delete][delete-only][cattle-version]:"
@@ -477,6 +477,8 @@ build_cluster()
         create_master
         IP=$(get_master_ip)
         echo -n "Waiting for server to start "
+
+        [[ ${VERBOSE_MODE} == true ]] && set +x
         while sleep 3; do
             if [ "$(curl -s http://${IP}/ping)" = "pong" ]; then
                 master=$(date -u +"%s")
@@ -484,7 +486,12 @@ build_cluster()
             fi
             echo -n "."
         done
+        [[ ${VERBOSE_MODE} == true ]] && set -x
+
         create_slaves
+
+        [[ ${VERBOSE_MODE} == true ]] && set +x
+
         echo
         echo -n "Waiting for slaves to register "
         while sleep 3; do
@@ -496,6 +503,10 @@ build_cluster()
             fi
             echo -n "."
         done
+
+        [[ ${VERBOSE_MODE} == true ]] && set -x
+
+
         diff=$(($master-$start))
         echo "$(($diff / 60)) minutes and $(($diff % 60)) seconds elapsed to create master and start rancher."
         diff=$(($all_slaves-$master))
