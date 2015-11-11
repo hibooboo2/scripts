@@ -263,7 +263,6 @@ start_build_master() {
         -e NODE_AGENT_WORK_DIR=$NODE_AGENT_WORK_DIR \
         -e NODE_AGENT_COMMIT=$NODE_AGENT_COMMIT \
         -e BUILD_TOOLS_REPO=$BUILD_TOOLS_REPO \
-        -e BUILD_TOOLS_COMMIT=$BUILD_TOOLS_COMMIT \
         -e CATTLE_UI_URL=$CATTLE_UI_URL \
         --privileged \
         rancher/build-master
