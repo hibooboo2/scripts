@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -x
 export HISTCONTROL=ignoredups  # no duplicate entries
 export HISTSIZE=10000000                   # big big history
 export HISTFILESIZE=10000000000000               # big big history
@@ -107,6 +107,7 @@ alias cdb='popd'
 alias dirs='dirs -v -l'
 alias gi='grep -in'
 alias gg='git grep -in'
+alias ga='grep -rnw . -e'
 alias myip='curl canihazip.com/s'
 alias goHome='ssh wizardofmath@home.jamescarlharris.com -p 2222'
 
@@ -130,3 +131,4 @@ elif [ "$(uname)" == 'Darwin' ]; then
    alias ls='ls -GtAphF'
 fi
 
+set +x
