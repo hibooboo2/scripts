@@ -172,8 +172,8 @@ long_args(){
         elif [[ ${LONG_FLAGS} = *\[${opt}\]:* ]]
         then
             OPTARG="${1}"
-            [[ -z ${OPTARG} ]] && echo $(tput setaf 1) --${opt} requires an Argument. $(tput sgr0) && show_short_help && exit 1
-            [[ ${OPTARG} = -* ]] && echo $(tput setaf 1) --${opt} requires an Argument. $(tput sgr0) && show_short_help && exit 1
+            [[ -z ${OPTARG} ]] && echo "$(tput setaf 1) --${opt} requires an Argument. $(tput sgr0)" && show_short_help && exit 1
+            [[ ${OPTARG} = -* ]] && echo "$(tput setaf 1) --${opt} requires an Argument. $(tput sgr0)" && show_short_help && exit 1
             OPTIND=$(( $OPTIND + 1 ))
 
         elif  [[ ${LONG_FLAGS} = *\[${opt}\]* ]]
@@ -181,7 +181,7 @@ long_args(){
             OPTARG=
 
         else
-            echo $(tput setaf 1) Flag: --${opt} is not a valid flag $(tput sgr0)
+            echo "$(tput setaf 1) Flag: --${opt} is not a valid flag $(tput sgr0)"
             show_short_help
             exit 1
         fi
