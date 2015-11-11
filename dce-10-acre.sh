@@ -160,11 +160,10 @@ long_args(){
         echo 1:${1}
         if [[ ${opt} = *=* ]]
         then
-            echo Using = approch.
             FLAG=$(echo ${opt} |cut -f 1 -d "=")
 
-            [[ ${LONG_FLAGS} != *\[${FLAG}\]* ]] && echo "$(tput setaf 1) Flag: --${FLAG} is not a valid flag $(tput sgr0)" && exit 1
-            [[ ${LONG_FLAGS} != *\[${FLAG}\]:* ]] && echo "$(tput setaf 1) Flag: --${FLAG} doesn\'t take an argument $(tput sgr0)" && exit 1
+            [[ ${LONG_FLAGS} != *\[${FLAG}\]* ]] && echo "$(tput setaf 1) Flag: --${FLAG} is not a valid flag $(tput sgr0)" && show_short_help && exit 1
+            [[ ${LONG_FLAGS} != *\[${FLAG}\]:* ]] && echo "$(tput setaf 1) Flag: --${FLAG} doesn\'t take an argument $(tput sgr0)" && show_short_help && exit 1
 
             val=${opt#*=}
             opt=${opt%=${val}}
@@ -172,19 +171,18 @@ long_args(){
 
         elif [[ ${LONG_FLAGS} = *\[${opt}\]:* ]]
         then
-            echo Using --long-flag arg1
             OPTARG="${1}"
-            [[ -z ${OPTARG} ]] && echo $(tput setaf 1) --${opt} requires an Argument. $(tput sgr0) && exit 1
-            [[ ${OPTARG} = -* ]] && echo $(tput setaf 1) --${opt} requires an Argument. $(tput sgr0) && exit 1
+            [[ -z ${OPTARG} ]] && echo $(tput setaf 1) --${opt} requires an Argument. $(tput sgr0) && show_short_help && exit 1
+            [[ ${OPTARG} = -* ]] && echo $(tput setaf 1) --${opt} requires an Argument. $(tput sgr0) && show_short_help && exit 1
             OPTIND=$(( $OPTIND + 1 ))
 
         elif  [[ ${LONG_FLAGS} = *\[${opt}\]* ]]
         then
-            echo No args --long-flag
             OPTARG=
 
         else
             echo $(tput setaf 1) Flag: --${opt} is not a valid flag $(tput sgr0)
+            show_short_help
             exit 1
         fi
         #End support for long flags. now opt can use cases that are words.
