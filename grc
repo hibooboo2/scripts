@@ -14,7 +14,7 @@ if [ "$#" -ne 2 ]; then
 fi
 
 
-num="$[`git branch --all --merged ${1}  | grep remotes/${2} | wc -l` + `git branch --all --merged ${1} | grep -v remotes| wc -l`]"
+num="$[$(git branch --all --merged ${1}  | grep remotes/${2} | wc -l) + $(git branch --all --merged ${1} | grep -v remotes| wc -l)]"
 [[ `echo ${num}` == 0 ]] && echo No Branches need cleaning. && exit 0
 
 git branch --all --merged ${1}  | grep remotes/${2}
