@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash -e
 #Add short help
 #Add rest of usage
 # ping slack that all nodes are up and running.
-DCE_NAME=`basename "$0"`
+DCE_NAME=$(basename "$0")
 DCE_INSTALLED=$(which ${DCE_NAME})
 VERBOSE_MODE="false"
 
@@ -268,14 +268,18 @@ start_build_master() {
         rancher/build-master
 }
 
-DCE_MASTER_MEM=2048
-DCE_SLAVE_MEM=1024
-DCE_MASTER_CORES=4
-DCE_SLAVE_CORES=2
-DCE_CLUSTER_NAME=`whoami`
-DCE_RUN="false"
-DCE_SKIP_CHECK="false"
-DCE_SLAVES=3
+: ${DCE_MASTER_MEM=2048}
+: ${DCE_SLAVE_MEM=1024}
+: ${DCE_MASTER_CORES=4}
+: ${DCE_SLAVE_CORES=2}
+: ${DCE_CLUSTER_NAME=$(whoami)}
+: ${DCE_RUN="false"}
+: ${DCE_SKIP_CHECK="false"}
+: ${DCE_SLAVES=3}
+: ${DCE_USE_NGROK:="false"}
+: ${DCE_NGROK_SUBDOMAIN:=}
+: ${DCE_NGROK_CLIENT_URL:=https://dl.ngrok.com/ngrok_2.0.19_linux_amd64.zip}
+
 while getopts "${SHORT_FLAGS}" opt; do
 
     long_args "${!OPTIND}"
