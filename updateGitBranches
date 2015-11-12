@@ -1,0 +1,20 @@
+#!/usr/bin/env bash -ex
+git rev-parse --abbrev-ref HEAD > /dev/null
+[[ "$?" != "0" ]] && echo "Please run this in a git repo." && exit 1
+NUM_GIT_CHANGES=$(($(git status -sb |wc -l)-1))
+[[ "${NUM_GIT_CHANGES}" != "0" ]] && git add --all && git stash > /dev/null
+GIT_LOCATION=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+[[ -z ${GIT_LOCATION} ]] && echo "Failed to find a branch" && exit 1
+[[ ${GIT_LOCATION} == "HEAD" ]] && GIT_LOCATION=$(git rev-parse --verify HEAD 2> /dev/null)
+git fetch origin master
+git checkout origin/master
+for i in $(git branch| grep -v "HEAD")
+do
+    echo ${i}
+    git checkout ${i}
+    git pull -r origin master > /dev/null 2>&1
+    [[ "$?" != "0" ]] && echo "${i} failed to rebase without changes. Aborting rebase." && git rebase --abort
+done
+git push --no-verify -f --all
+git checkout ${GIT_LOCATION}
+[[ "${NUM_GIT_CHANGES}" != "0" ]] && git stash pop
