@@ -100,23 +100,21 @@ sendtext () {
     curl http://textbelt.com/text -d number=${1} -d "message=$2" 
 }
 
-#alias cd so it uses the directory stack
-alias cd='pushd'
-#aliad cdb as a command that goes one directory back in the stack
-alias cdb='popd'
-alias dirs='dirs -v -l'
-alias gi='grep -in'
-alias gg='git grep -in'
-alias ga='grep -rnw . -e'
-alias myip='curl canihazip.com/s'
-alias goHome='ssh wizardofmath@home.jamescarlharris.com -p 2222'
 
-alias gcm="git commit -am"
-alias myscripts="cd $MYSCRIPTS"
+alias cd='pushd' #alias cd so it uses the directory stack
+alias cdb='popd' #aliad cdb as a command that goes one directory back in the stack
 alias del="rm -rf"
+alias dirs='dirs -v -l'
+alias dm='docker-machine'
+alias ga='grep -rnw . -e'
+alias gcm="git commit -am"
+alias gg='git grep -in'
+alias gi='grep -in'
+alias goHome='ssh wizardofmath@home.jamescarlharris.com -p 2222'
 alias home="cd ~"
+alias myip='curl canihazip.com/s'
+alias myscripts="cd $MYSCRIPTS"
 alias sand="mkdir -p ~/sandbox; cd ~/sandbox"
-
 #Always keep color with less.
 alias less="less -r"
 
