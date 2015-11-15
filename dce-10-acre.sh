@@ -7,7 +7,9 @@ DCE_INSTALLED=$(which ${DCE_NAME})
 VERBOSE_MODE="false"
 
 SHORT_FLAGS=":M:m:C:c:v:p:H:u:n:b:s:DqhVfdN:h-:"
-LONG_FLAGS="[help][delete][delete-only][cattle-version]:"
+LONG_OPTS="[help][delete][delete-only][cattle-version]:"
+
+source $(dirname ${BASH_SOURCE[0]})/getopts/long_args
 
 show_usage()
 {
@@ -142,56 +144,6 @@ Minimal command to use all defaults:
     Using above command will yield 4 machines 1 master 3 slaves where the slaves have 1GB ram 2 cores
     The master will have 4 cores 2 gb of ram  and the will use plain build-master with virtualbox driver.
 EOF
-}
-
-long_args(){
-    #ADD support for long flags.
-    #To use just call this function at the begining of the use of getopts before your case statement.
-    #Be sure to pass in the value of ${!OPTIND} ex: long_args "${!OPTIND}"
-    #Not sure why but cannot call ${!OPTIND} from within the function and get correct value so Must do It before hand
-    #and pass in as a var or arg. So I chose arg.
-    if [ "$opt" == "-" ]
-    then
-        #Uncomment line to print current flag before processing
-        #echo  $(tput setaf 3) OPTARG: $OPTARG$(tput sgr0)
-        opt=$OPTARG
-        FLAG_TYPE="--"
-        echo OPT:${opt}
-        echo 1:${1}
-        if [[ ${opt} = *=* ]]
-        then
-            FLAG=$(echo ${opt} |cut -f 1 -d "=")
-
-            [[ ${LONG_FLAGS} != *\[${FLAG}\]* ]] && echo "$(tput setaf 1) Flag: --${FLAG} is not a valid flag $(tput sgr0)" && show_short_help && exit 1
-            [[ ${LONG_FLAGS} != *\[${FLAG}\]:* ]] && echo "$(tput setaf 1) Flag: --${FLAG} doesn\'t take an argument $(tput sgr0)" && show_short_help && exit 1
-
-            val=${opt#*=}
-            opt=${opt%=${val}}
-            OPTARG=${val}
-
-        elif [[ ${LONG_FLAGS} = *\[${opt}\]:* ]]
-        then
-            OPTARG="${1}"
-            [[ -z ${OPTARG} ]] && echo "$(tput setaf 1) --${opt} requires an Argument. $(tput sgr0)" && show_short_help && exit 1
-            [[ ${OPTARG} = -* ]] && echo "$(tput setaf 1) --${opt} requires an Argument. $(tput sgr0)" && show_short_help && exit 1
-            OPTIND=$(( $OPTIND + 1 ))
-
-        elif  [[ ${LONG_FLAGS} = *\[${opt}\]* ]]
-        then
-            OPTARG=
-
-        else
-            echo "$(tput setaf 1) Flag: --${opt} is not a valid flag $(tput sgr0)"
-            show_short_help
-            exit 1
-        fi
-        #End support for long flags. now opt can use cases that are words.
-        #You can use FLAG_TYPE to determine weather the called flag was long or short. - is short -- is long.
-        #Uncomment above line to display flag with arg that was just parsed.
-        # echo ${FLAG_TYPE}${opt} ${OPTARG}
-    else
-        FLAG_TYPE="-"
-    fi
 }
 
 all_env(){
