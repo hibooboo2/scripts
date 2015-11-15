@@ -1,4 +1,5 @@
-#!/usr/bin/env bash -e
+#!/usr/bin/env bash
+set -e
 #Add short help
 #Add rest of usage
 # ping slack that all nodes are up and running.
