@@ -6,6 +6,9 @@ if [ "${SCRIPTS_UPDATE}" == "true" ]
 then
     git fetch --all
     git checkout origin/master
+    git submodule init
+    git submodule update
+
 fi
 . ./.commonvars
 . ./.dockerStuff
