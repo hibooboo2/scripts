@@ -319,6 +319,7 @@ while getopts "${SHORT_FLAGS}" opt; do
             ;;
         D | delete-only)
             DCE_DELETE_CLUSTER="true"
+            DCE_SKIP_CHECK="true"
             DCE_DELETE_ONLY="true"
             ;;
         V)
