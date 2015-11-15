@@ -10,7 +10,13 @@ VERBOSE_MODE="false"
 SHORT_FLAGS=":M:m:C:c:v:p:H:u:n:b:s:DqhVfdN:h-:"
 LONG_OPTS="[help][delete][delete-only][cattle-version]:"
 
+DCE_SOURCE=${BASH_SOURCE[0]}
+if [[ -L "${DCE_SOURCE}" ]]
+then
+source $(dirname $(readlink ${DCE_SOURCE}))/getopts/long_args
+else
 source $(dirname ${BASH_SOURCE[0]})/getopts/long_args
+fi
 
 show_usage()
 {
