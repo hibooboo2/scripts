@@ -1,0 +1,56 @@
+#!/bin/bash
+: ${SHORT_OPTS:="h-:"} # The -: allows long flags ex --this-is-a-flag --thisflag --flag
+: ${LONG_OPTS:="[flag]:[arg]:[flag-long][flag-longer-arg]:"}
+
+long_args(){
+    #ADD support for long flags.
+    #To use just call this function at the begining of the use of getopts before your case statement.
+    #Be sure to pass in the value of ${!OPTIND} ex: long_args "${!OPTIND}"
+    #Not sure why but cannot call ${!OPTIND} from within the function and get correct value so Must do It before hand
+    #and pass in as a var or arg. So I chose arg.
+    if [ "$opt" == "-" ]
+    then
+        #Uncomment line to print current flag before processing
+        #echo  $(tput setaf 3) OPTARG: $OPTARG$(tput sgr0)
+        opt=$OPTARG
+        FLAG_TYPE="--"
+        echo OPT:${opt}
+        echo 1:${1}
+        if [[ ${opt} = *=* ]]
+        then
+            FLAG=$(echo ${opt} |cut -f 1 -d "=")
+
+            if [[ ${LONG_OPTS} == *\[${FLAG}\]:* ]]
+            then
+            val=${opt#*=}
+            opt=${opt%=${val}}
+            OPTARG=${val}
+            else
+                opt=?
+            fi
+        elif [[ ${LONG_OPTS} = *\[${opt}\]:* ]]
+        then
+            OPTARG="${1}"
+            if [[ -z ${OPTARG} || ${OPTARG} = -* ]]
+            then
+                echo $(tput setaf 1) --${opt} requires an Argument. $(tput sgr0)
+                opt=?
+            else
+                OPTIND=$(( $OPTIND + 1 ))
+            fi
+        elif  [[ ${LONG_OPTS} = *\[${opt}\]* ]]
+        then
+            OPTARG=
+        else
+            echo $(tput setaf 1) Flag: --${opt} is not a valid flag $(tput sgr0)
+            opt=?
+        fi
+        #End support for long flags. now opt can use cases that are words.
+        #You can use FLAG_TYPE to determine weather the called flag was long or short. - is short -- is long.
+        #Uncomment below line to display flag with arg that was just parsed.
+        # echo ${FLAG_TYPE}${opt} ${OPTARG}
+    else
+        FLAG_TYPE="-"
+    fi
+}
+export long_args
