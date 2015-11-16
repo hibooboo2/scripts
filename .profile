@@ -14,5 +14,6 @@ fi
 . ./.dockerStuff
 . ./.virtualenv
 . ./.profile.sh
+export CDPATH=".:~:${CODE_HOME}/:${CDPATH}"
 sand
 clear

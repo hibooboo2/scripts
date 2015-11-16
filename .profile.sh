@@ -1,9 +1,12 @@
 #!/bin/bash
 set -x
-export HISTCONTROL=ignoredups  # no duplicate entries
-export HISTSIZE=10000000                   # big big history
-export HISTFILESIZE=10000000000000               # big big history
+export HISTCONTROL=ignoreboth  # no duplicate entries
+export HISTSIZE=100000000000000                   # big big history
+export HISTFILESIZE=10000000000000000               # big big history
+export HISTTIMEFORMAT='%b %d %H:%M:%S: '
 shopt -s histappend
+set cmdhist
+
 
 #PS4 is what is used to prepend commands executed when using set -x
 export PS4="\[\e[1;30m\] ${BASH_SOURCE}:${LINENO} ${FUNCNAME[0]:+${FUNCNAME[0]}()} > \[\e[0m\] \[\e[1;34m\]"
