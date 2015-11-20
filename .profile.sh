@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 export HISTCONTROL=ignoreboth  # no duplicate entries
 export HISTSIZE=100000000000000                   # big big history
 export HISTFILESIZE=10000000000000000               # big big history
@@ -77,7 +76,9 @@ function __prompt_command() {
     else
         EXIT="${GREEN}${EXIT}${NONE}"
     fi
-    local time="$(echo $(($(date +"%T" | cut -f 1 -d ":") % 12)):$(date +"%T" | cut -f 2-3 -d ":"))"
+    local hour=$(date +"%T" | cut -f 1 -d ":")
+    hour="${hour#"${hour%%[!\0]*}"}"
+    local time="$(echo $((hour % 12)):$(date +"%T" | cut -f 2-3 -d ":"))"
     PS1+="${GREY}[ ${BLUE}${time}${GREY} ] ${LIGHT_BLUE}\u${NONE}${GREY}@${YELLOW}\h ${GREY}\
     (${YELLOW}+${SHLVL}${GREY}|${YELLOW}%\j${GREY}|${LIGHT_BLUE}!\!${GREY}|${EXIT}${GREY})${NONE} \n"
 
