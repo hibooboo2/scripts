@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export MYSCRIPTS="$HOME/scripts"
-export CODE_HOME="$HOME/code"
+export CODE_HOME="$HOME/src"
 export GOPATH="$HOME/go"
 export PATH="${MYSCRIPTS}:${MYSCRIPTS}/bin:/usr/local/sbin:${PATH}:$GOPATH/bin"
 [[ -z "${EMAIL}" ]] && echo what is your email? && read EMAIL && echo export EMAIL=${EMAIL} >> ~/.privateVars 

@@ -21,7 +21,7 @@ function clone() {
 set -e
 
 [[ -z "${1}" ]] && echo Please specify User or Org to clone. && exit 1
-: ${CODE_HOME:=${HOME}/code} && mkdir -p ${CODE_HOME} && echo CODE_HOME is set to ${CODE_HOME}
+: ${CODE_HOME:=${HOME}/src} && mkdir -p ${CODE_HOME} && echo CODE_HOME is set to ${CODE_HOME}
 
 CMDS="hub jq curl git"
 

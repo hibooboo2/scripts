@@ -17,6 +17,5 @@ do
     git pull -r origin master > /dev/null 2>&1
     [[ "$?" != "0" ]] && echo "${i} failed to rebase without changes. Aborting rebase." && git rebase --abort
 done
-git push --no-verify -f --all
 git checkout ${GIT_LOCATION}
 [[ "${NUM_GIT_CHANGES}" != "0" ]] && git stash pop
