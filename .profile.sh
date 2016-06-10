@@ -137,8 +137,8 @@ popd()
     builtin popd "$@" > /dev/null
 }
 
-sendtext () { 
-    curl http://textbelt.com/text -d number=${1} -d "message=$2" 
+sendtext () {
+    curl http://textbelt.com/text -d number=${1} -d "message=$2"
 }
 
 
@@ -156,6 +156,7 @@ alias home="cd ~"
 alias myip='curl canihazip.com/s'
 alias myscripts="cd $MYSCRIPTS"
 alias sand="mkdir -p ~/sandbox; cd ~/sandbox"
+alias psql="psql -q"
 #Always keep color with less.
 alias less="less -r"
 
