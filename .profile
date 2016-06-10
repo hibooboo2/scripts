@@ -22,7 +22,7 @@ fi
 . ./.virtualenv
 . ./.profile.sh
 
-if test “${PS1+set}”;
+if test “${TERM+set}”;
 then
 	export CDPATH=".:~:${CODE_HOME}/:${CDPATH}"
 	export CDPATH=":${CDPATH}:${GOPATH}/src/github.com/"
