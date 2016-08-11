@@ -17,7 +17,7 @@ fi
 num="$[$(git branch --all --merged ${1}  | grep remotes/${2} | wc -l) + $(git branch --all --merged ${1} | grep -v remotes| wc -l)]"
 [[ $(echo ${num}) == 0 ]] && echo No Branches need cleaning. && exit 0
 
-git branch --all --merged ${1}  | grep remotes/${2}
+git branch --all --merged ${1}  | grep remotes/${2} | grep -v remotes/${2}/master | grep -v remotes/${2}/develop | grep -v remotes/${2}/HEAD
 git branch --all --merged ${1} | grep -v remotes | grep -v \*
 echo Delete all of these branches? \(Y/N\)
 read answer
