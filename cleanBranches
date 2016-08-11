@@ -1,0 +1,31 @@
+#!/bin/bash
+if [ "$#" -ne 1 ]; then
+    fileName="${0##*/}"
+    echo "Illegal number of parameters $#"
+    echo "Recieved args:"
+    echo "    $@"
+    echo "Usage ${fileName} \${remote to check for merged changes}"
+    echo ""
+    echo "${fileName} origin/master"
+    echo ""
+    echo "Would delete all local branches that have been merged to origin/master"
+    exit 1
+fi
+
+
+num="$[$(git branch --all --merged ${1}  | grep -v remotes/ | grep -v master | grep -v develop  | grep -v \* |wc -l)]"
+[[ $(echo ${num}) == 0 ]] && echo No Branches need cleaning. && exit 0
+
+git branch --all --merged ${1}  | grep -v remotes/ | grep -v master | grep -v develop | grep -v \*
+echo Delete all of these branches? \(Y/N\)
+read answer
+if [ "${answer}" == "Y" ]
+then
+    localBranches=$(git branch --all --merged ${1}  | grep -v remotes/ | grep -v master | grep -v develop | grep -v \*)
+    for i in ${localBranches}
+    do
+        git branch -d ${i}
+    done
+else
+    echo No branches deleted.
+fi
