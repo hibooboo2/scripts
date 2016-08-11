@@ -1,7 +1,8 @@
 #!/bin/bash
 set -e
-golint -set_exit_status ./...
+goimports -w .
+golint -set_exit_status `git ls-files | grep .go`
 gofmt -d -s -w .
-goimports -d -w .
 
 go vet .
+go build
