@@ -29,6 +29,7 @@ then
 	export CDPATH=":${CDPATH}:${GOPATH}/src/github.com/BolsteDev"
 	export CDPATH=":${CDPATH}:${GOPATH}/src/github.com/jjeffrey-bolste/"
 	export CDPATH=":${CDPATH}:${GOPATH}/src/github.com/hibooboo2/"
+	export CDPATH=":${CDPATH}:${GOPATH}/src/gogs.jhrb.us/wizardofmath/"
 	export CDPATH=":${CDPATH}:${HOME}/projects"
 	sand
 	clear
