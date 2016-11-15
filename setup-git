@@ -17,6 +17,6 @@ git config --global alias.branches 'branch -avv'
 git config --global branch.autosetupmerge false
 git config --global alias.update '![[ ! -z "$(which updateGitBranches)" ]] && updateGitBranches'
 git config --global color.ui auto
-[[ ! -z "${EMAIL}" ]] && git config --global user.email '${EMAIL}'
-[[ ! -z "${USER_NAME}" ]] && git config --global user.name '${USER_NAME}'
+[[ ! -z "${EMAIL}" ]] && git config --global user.email ${EMAIL}
+[[ ! -z "${USER_NAME}" ]] && git config --global user.name ${USER_NAME}
 exit 0
