@@ -24,7 +24,11 @@ trim() {
 }
 
 #PS4 is what is used to prepend commands executed when using set -x
-export PS4="${GREY} ${BASH_SOURCE}:${LINENO} ${FUNCNAME[0]:+${FUNCNAME[0]}()} > \[\e[0m\]"
+if test "${TERM+set}"
+then 
+ echo WOuld set ps4
+# export PS4="${GREY} ${BASH_SOURCE}:${LINENO} ${FUNCNAME[0]:+${FUNCNAME[0]}()} > \[\e[0m\]"
+fi
 
 function append_or_blank() {
     local status="$(trim $(git status -s| grep "${1}"| wc -l))"
@@ -171,4 +175,8 @@ elif [ "$(uname)" == 'Darwin' ]; then
    alias ls='ls -GtAphF'
 fi
 
-set +x
+if test "${TERM+set}"
+then
+	set +x
+fi
+
