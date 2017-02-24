@@ -1,3 +1,0 @@
-image: rancher/docker-dind-base:latest
-script:
-  - ./suceed.sh

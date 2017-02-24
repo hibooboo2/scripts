@@ -25,7 +25,7 @@ trim() {
 
 #PS4 is what is used to prepend commands executed when using set -x
 if test "${TERM+set}"
-then 
+then
  echo WOuld set ps4
 # export PS4="${GREY} ${BASH_SOURCE}:${LINENO} ${FUNCNAME[0]:+${FUNCNAME[0]}()} > \[\e[0m\]"
 fi
@@ -175,8 +175,9 @@ elif [ "$(uname)" == 'Darwin' ]; then
    alias ls='ls -GtAphF'
 fi
 
+[[ -z "$(which direnv)" ]] || eval "$(direnv hook bash)"
+
 if test "${TERM+set}"
 then
 	set +x
 fi
-

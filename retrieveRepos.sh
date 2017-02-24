@@ -21,7 +21,7 @@ function clone() {
 set -e
 
 [[ -z "${1}" ]] && echo Please specify User or Org to clone. && exit 1
-: ${CODE_HOME:=${HOME}/src} && mkdir -p ${CODE_HOME} && echo CODE_HOME is set to ${CODE_HOME}
+: ${CODE_HOME:=${HOME}/go/src/github.com} && mkdir -p ${CODE_HOME} && echo CODE_HOME is set to ${CODE_HOME}
 
 CMDS="hub jq curl git"
 
@@ -31,11 +31,10 @@ do
     which $i >/dev/null && continue || { echo "$i command not found."; exit 1; }
 done
 
-[[ ! -d ${CODE_HOME}/ ]] && echo Making code Folder && mkdir ${CODE_HOME}/
-[[ ! -d ${CODE_HOME}/$1 ]] && echo Making User Folder Git repos && mkdir ${CODE_HOME}/$1
 [[ ! $(github orgs/$1/repos | jq -r .message) == "Not Found" ]] && type=org
 [[ ! $(github users/$1/repos | jq -r .message) == "Not Found" ]] && type=user
 [[ -z "${type}" ]] && echo Invalid User or Org && exit 2
+[[ ! -d ${CODE_HOME}/$1 ]] && echo Making User Folder Git repos && mkdir -p ${CODE_HOME}/$1
 echo Fetching ${type} ${1}
 for i in $(github ${type}s/${1}/repos | jq -r .[].name)
 do
