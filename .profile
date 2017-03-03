@@ -4,7 +4,7 @@
 cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd
 
 
-if test “${PS1+set}”;
+if test "${PS1+set}";
 then
 	if [ "${SCRIPTS_UPDATE}" == "true" ]
 	then
@@ -21,7 +21,7 @@ fi
 . ./.virtualenv
 . ./.profile.sh
 
-if test “${TERM+set}”;
+if test "${TERM+set}";
 then
 	export CDPATH=".:~:${CODE_HOME}/:${CDPATH}"
 	export CDPATH=":${CDPATH}:${GOPATH}/src/github.com/"
