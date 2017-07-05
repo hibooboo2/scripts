@@ -1,6 +1,6 @@
 git config --global alias.cm 'commit -am'
 git config --global push.default matching
-git config --global alias.pf 'push -f --no-verify --all'
+git config --global alias.pf 'push -f --no-verify'
 git config --global alias.cma 'commit --amend'
 git config --global alias.fa 'fetch --all'
 git config --global alias.com 'checkout origin/master'
