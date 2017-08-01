@@ -1,8 +1,8 @@
-git config --global alias.cm 'commit -am'
+git config --global alias.cm 'commit -m'
 git config --global push.default matching
 git config --global alias.pf 'push -f --no-verify'
 git config --global alias.cma 'commit --amend'
-git config --global alias.fa 'fetch --all'
+git config --global alias.fa 'fetch --all --prune'
 git config --global alias.com 'checkout origin/master'
 git config --global alias.pom 'pull -r origin master'
 git config --global alias.rom 'rebase -i origin/master'
