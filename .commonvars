@@ -3,7 +3,7 @@
 export MYSCRIPTS="$HOME/scripts"
 export CODE_HOME="$HOME/go/src/github.com/"
 export GOPATH="$HOME/go"
-export PATH="${MYSCRIPTS}:${MYSCRIPTS}/bin:/usr/local/sbin:${PATH}:$GOPATH/bin"
+export PATH="${MYSCRIPTS}:${MYSCRIPTS}/bin:${MYSCRIPTS}/scripts:/usr/local/sbin:${PATH}:$GOPATH/bin"
 export EDITOR=$(which vim)
 export GIT_EDITOR=$EDITOR
 
