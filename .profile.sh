@@ -159,7 +159,7 @@ alias goHome='ssh wizardofmath@home.jamescarlharris.com -p 2222'
 alias home="cd ~"
 alias myip='curl canihazip.com/s'
 alias myscripts="cd $MYSCRIPTS"
-alias sand="mkdir -p ~/sandbox; cd ~/sandbox"
+alias sand="mkdir -p ${SANDBOX}; cd ${SANDBOX}"
 alias psql="psql -q"
 #Always keep color with less.
 alias less="less -r"

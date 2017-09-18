@@ -1,11 +1,13 @@
 #!/bin/bash
 
+[[ -z "${EMAIL}" ]] && echo what is your email? && read EMAIL && echo export EMAIL="${EMAIL}" >> ~/.privateVars
+[[ -z "${USER_NAME}" ]] && echo what is your name? && read USER_NAME && echo export USER_NAME="${USER_NAME}" >> ~/.privateVars
+[[ -z "${GITHUB_USER}" ]] && echo what is your github user? && read GITHUB_USER && echo export GITHUB_USER="${GITHUB_USER}" >> ~/.privateVars
+
 export MYSCRIPTS="$HOME/scripts"
 export CODE_HOME="$HOME/go/src/github.com/"
 export GOPATH="$HOME/go"
+export SANDBOX="${GOPATH}/src/github.com/${GITHUB_USER}/sandbox"
 export PATH="${MYSCRIPTS}:${MYSCRIPTS}/bin:${MYSCRIPTS}/scripts:/usr/local/sbin:${PATH}:$GOPATH/bin"
 export EDITOR=$(which vim)
 export GIT_EDITOR=$EDITOR
-
-[[ -z "${EMAIL}" ]] && echo what is your email? && read EMAIL && echo export EMAIL=${EMAIL} >> ~/.privateVars
-[[ -z "${USER_NAME}" ]] && echo what is your name? && read USER_NAME && echo export USER_NAME=${USER_NAME} >> ~/.privateVars

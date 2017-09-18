@@ -1,7 +1,7 @@
 #!/bin/bash
 . ${HOME}/.privateVars
 
-cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd
+pushd "$( dirname "${BASH_SOURCE[0]}" )" && pwd
 
 
 if test "${PS1+set}";
@@ -31,3 +31,5 @@ then
 	export CDPATH=":${CDPATH}:${HOME}/projects"
 	clear
 fi
+
+popd
