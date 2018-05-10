@@ -161,6 +161,7 @@ alias myip='curl canihazip.com/s'
 alias myscripts="cd $MYSCRIPTS"
 alias sand="mkdir -p ${SANDBOX}; cd ${SANDBOX}"
 alias psql="psql -q"
+alias mkdir="mkdir -p"
 #Always keep color with less.
 alias less="less -r"
 
