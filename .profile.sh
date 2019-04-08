@@ -86,7 +86,6 @@ function __prompt_command() {
     PS1+="${GREY}[ ${BLUE}${time}${GREY} ] ${LIGHT_BLUE}\u${NONE}${GREY}@${YELLOW}\h ${GREY}\
     (${YELLOW}+${SHLVL}${GREY}|${YELLOW}%\j${GREY}|${LIGHT_BLUE}!\!${GREY}|${EXIT}${GREY})${NONE} \n"
 
-    PS1+="${PURPLE}[$(kubectl config current-context) ]\n${NONE}"
     PS1+="${LIGHT_BLUE}\$${NONE}${WHITE}${NONE} "
 }
 

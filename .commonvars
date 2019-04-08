@@ -5,9 +5,9 @@
 [[ -z "${GITHUB_USER}" ]] && echo what is your github user? && read GITHUB_USER && echo export GITHUB_USER="${GITHUB_USER}" >> ~/.privateVars
 
 export MYSCRIPTS="$HOME/scripts"
-export CODE_HOME="$HOME/go/src/github.com/"
-export GOPATH="$HOME/go"
+[[ -z "$GOPATH" ]] && export GOPATH="$HOME/go"
 export SANDBOX="${GOPATH}/src/github.com/${GITHUB_USER}/sandbox"
+export CODE_HOME="${GOPATH}/go/src/github.com/"
 export PATH="${MYSCRIPTS}:${MYSCRIPTS}/bin:${MYSCRIPTS}/scripts:/usr/local/sbin:${PATH}:$GOPATH/bin"
 export EDITOR=$(which vim)
 export GIT_EDITOR=$EDITOR

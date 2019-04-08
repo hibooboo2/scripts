@@ -1,9 +1,0 @@
-#!/bin/bash
-
-if [ -z $SLACK_WEBHOOK_TOKEN ]; then
-    echo "Need a webhook token..." 2>&1
-    echo ${MESSAGE}
-    exit 0
-fi
-message="${@}"
-curl -s -X POST https://hooks.slack.com/services/${SLACK_WEBHOOK_TOKEN} -d "{ \"text\": \"${message}\" }"

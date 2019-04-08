@@ -1,5 +1,5 @@
-FROM ubuntu:14.04.2
-MAINTAINER James Harris wizardofmath@gmail.com
+FROM ubuntu:latest
+MAINTAINER James Jeffrey wizardofmath@gmail.com
 LABEL devbox="wizardofmath"
 ENV MYSCRIPTS /source/scripts
 env HOME /source
