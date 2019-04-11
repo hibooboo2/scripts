@@ -31,10 +31,10 @@ fi
 
 if [ ! -f "~/.bashrc" ]
 then
-    echo . ${MYSCRIPTS}/.profile >> ~/.bashrc
+    echo "if tty -s; then . ${MYSCRIPTS}/scripts/.profile; fi" >> ~/.bashrc
 elif [ ! -f "~/.profile" ]
 then
-    echo . ${MYSCRIPTS}/.profile >> ~/.profile
+    echo "if tty -s; then . ${MYSCRIPTS}/scripts/.profile; fi" >> ~/.profile
 else
     echo Where do you want to source ${MYSCRIPTS}/.profile ?
     read TOSOURCE

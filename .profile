@@ -16,13 +16,12 @@ then
 	fi
 fi
 
-. ./.commonvars
-. ./.dockerStuff
-. ./.virtualenv
-. ./.profile.sh
-
 if test "${TERM+set}";
 then
+    . ./.commonvars
+    . ./.dockerStuff
+    . ./.profile.sh
+
 	export CDPATH=".:~:${CODE_HOME}/:${CDPATH}"
 	export CDPATH=":${CDPATH}:${GOPATH}/src/github.com/"
 	export CDPATH=":${CDPATH}:${GOPATH}/src/github.com/jjeffrey-bolste/"
