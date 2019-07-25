@@ -1,5 +1,5 @@
 git config --global alias.cm 'commit -m'
-git config --global push.default matching
+git config --global push.default current
 git config --global alias.pf 'push -f --no-verify'
 git config --global alias.cma 'commit --amend'
 git config --global alias.fa 'fetch --all --prune'
