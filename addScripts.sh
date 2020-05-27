@@ -9,7 +9,7 @@ function ifInstall() {
     then
         if [ -z $(which ${1}) ]
         then
-            apt-get -q -y install ${1}
+            sudo apt-get -q -y install ${1} || echo ${1} not found to install
         fi
     fi
 }
