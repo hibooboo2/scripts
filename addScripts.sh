@@ -18,6 +18,7 @@ ifInstall jq
 ifInstall vim
 ifInstall git
 ifInstall curl
+ifInstall net-tools
 
 [[ -z $(which git) ]] && echo You need git installed! && exit 1
 
