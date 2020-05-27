@@ -8,6 +8,6 @@ export MYSCRIPTS="$HOME/scripts"
 [[ -z "$GOPATH" ]] && export GOPATH="$HOME/go"
 export SANDBOX="${GOPATH}/src/github.com/${GITHUB_USER}/sandbox"
 export CODE_HOME="${GOPATH}/go/src/github.com/"
-export PATH="${MYSCRIPTS}:${MYSCRIPTS}/bin:${MYSCRIPTS}/scripts:/usr/local/sbin:${PATH}:$GOPATH/bin"
+export PATH="${MYSCRIPTS}:${MYSCRIPTS}/bin:${MYSCRIPTS}/scripts:/usr/local/sbin:${PATH}:$GOPATH/bin:/usr/local/go/bin"
 export EDITOR=$(which vim)
 export GIT_EDITOR=$EDITOR
