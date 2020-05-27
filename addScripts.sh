@@ -17,6 +17,7 @@ function ifInstall() {
 ifInstall jq
 ifInstall vim
 ifInstall git
+ifInstall curl
 
 [[ -z $(which git) ]] && echo You need git installed! && exit 1
 
