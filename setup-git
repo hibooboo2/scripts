@@ -3,7 +3,7 @@ git config --global push.default current
 git config --global alias.pf 'push -f --no-verify'
 git config --global alias.cma 'commit --amend'
 git config --global alias.cmn 'commit --amend --no-edit'
-git config --global alias.fa 'fetch --all --prune'
+git config --global alias.fa 'fetch --all --prune -j5'
 git config --global alias.com 'checkout origin/master'
 git config --global alias.pom 'pull -r origin master'
 git config --global alias.rom 'rebase -i origin/master'
