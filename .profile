@@ -34,3 +34,4 @@ fi
 popd
 
 source "$( dirname "${BASH_SOURCE[0]}" )/timing_and_autofocus_vscode.sh"
+source "$( dirname "${BASH_SOURCE[0]}" )/history_per_dir.sh"
