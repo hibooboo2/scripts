@@ -73,14 +73,6 @@ function parse_git_branch(){
     fi
 }
 
-if [[ -z "${FIRST_FOLDER_OPENED}"  ]];then
-        export FIRST_FOLDER_OPENED=$(pwd)
-fi
-
-function time_before_command() {
-    export LAST_TRAP_TIME=$(date +%s)
-}
-
 function __prompt_command() {
     local EXIT="$?"    # This needs to be first
     
@@ -96,19 +88,20 @@ function __prompt_command() {
     local hour=$(date +"%T" | cut -f 1 -d ":")
     hour="${hour#"${hour%%[!\0]*}"}"
     local time="$(echo $((hour % 12)):$(date +"%T" | cut -f 2-3 -d ":"))"
-    local current_time=$(date +%s)
-    local time_diff=$((current_time-LAST_TRAP_TIME))
     
-    PS1+="${GREY}[ ${BLUE}${time}${GREY} ] [ ${BLUE}${time_diff} seconds${GREY} ] ${LIGHT_BLUE}\u${NONE}${GREY}@${YELLOW}\h ${GREY}\
+    PS1+="${GREY}[ ${BLUE}${time}${GREY} ] " 
+
+    # See timing_and_autofocus_vscode.sh
+    if [ -z "${__time_diff}" ]; then
+        echo NO TIME DIFF
+    else
+        PS1+="[ ${BLUE}${__time_diff} seconds${GREY} ] "
+    fi
+
+    PS1+="${LIGHT_BLUE}\u${NONE}${GREY}@${YELLOW}\h ${GREY}\
     (${YELLOW}+${SHLVL}${GREY}|${YELLOW}%\j${GREY}|${LIGHT_BLUE}!\!${GREY}|${EXIT}${GREY})${NONE} \n"
 
     PS1+="${LIGHT_BLUE}\$${NONE}${WHITE}${NONE} "
-
-    if [ "${TERM_PROGRAM}" = "vscode" ]; then
-        if [ "$time_diff" -gt "30" ]; then
-            code ${FIRST_FOLDER_OPENED}
-        fi
-    fi
 }
 
 function no_sudo_docker(){
@@ -204,5 +197,3 @@ if test "${TERM+set}"
 then
 	set +x
 fi
-
-trap time_before_command DEBUG
