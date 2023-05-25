@@ -1,10 +1,13 @@
 #!/bin/bash
-export HISTCONTROL=ignoreboth  # no duplicate entries
+export HISTCONTROL=ignoreboth:erasedups  # no duplicate entries
 export HISTSIZE=100000000000000                   # big big history
-export HISTFILESIZE=10000000000000000               # big big history
+export HISTFILESIZE=$HISTSIZE               # big big history
 export HISTTIMEFORMAT='%b %d %H:%M:%S: '
 shopt -s histappend
-set cmdhist
+export HISTCONTROL=ignoreboth
+export HISTIGNORE='ls:bg:fg:history'
+shopt -s cmdhist
+
 
 NONE='\[\e[0m\]'
 RED='\[\e[0;31m\]'
@@ -70,8 +73,18 @@ function parse_git_branch(){
     fi
 }
 
+if [[ -z "${FIRST_FOLDER_OPENED}"  ]];then
+        export FIRST_FOLDER_OPENED=$(pwd)
+fi
+
+function time_before_command() {
+    export LAST_TRAP_TIME=$(date +%s)
+}
+
 function __prompt_command() {
     local EXIT="$?"    # This needs to be first
+    
+    history -a
 
     PS1="\n"
     PS1+="${GREY}[${GREEN} \w ${GREY}] $(parse_git_branch)\n"
@@ -83,10 +96,19 @@ function __prompt_command() {
     local hour=$(date +"%T" | cut -f 1 -d ":")
     hour="${hour#"${hour%%[!\0]*}"}"
     local time="$(echo $((hour % 12)):$(date +"%T" | cut -f 2-3 -d ":"))"
-    PS1+="${GREY}[ ${BLUE}${time}${GREY} ] ${LIGHT_BLUE}\u${NONE}${GREY}@${YELLOW}\h ${GREY}\
+    local current_time=$(date +%s)
+    local time_diff=$((current_time-LAST_TRAP_TIME))
+    
+    PS1+="${GREY}[ ${BLUE}${time}${GREY} ] [ ${BLUE}${time_diff} seconds${GREY} ] ${LIGHT_BLUE}\u${NONE}${GREY}@${YELLOW}\h ${GREY}\
     (${YELLOW}+${SHLVL}${GREY}|${YELLOW}%\j${GREY}|${LIGHT_BLUE}!\!${GREY}|${EXIT}${GREY})${NONE} \n"
 
     PS1+="${LIGHT_BLUE}\$${NONE}${WHITE}${NONE} "
+
+    if [ "${TERM_PROGRAM}" = "vscode" ]; then
+        if [ "$time_diff" -gt "30" ]; then
+            code ${FIRST_FOLDER_OPENED}
+        fi
+    fi
 }
 
 function no_sudo_docker(){
@@ -182,3 +204,5 @@ if test "${TERM+set}"
 then
 	set +x
 fi
+
+trap time_before_command DEBUG
