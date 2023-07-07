@@ -1,0 +1,4 @@
+#! /bin/bash
+
+git fetch origin refs/pull-requests/$1/from:pr-$1
+git checkout pr-$1
