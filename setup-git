@@ -21,6 +21,7 @@ git config --global color.ui auto
 git config --global url."git@github.com:".pushInsteadOf "https://github.com/"
 git config --global alias.pr  '!checkout-pr $1'
 git config --global rebase.autoStash true
+git config --global core.excludesFile '~/.gitignore'
 
 [[ ! -z "${EMAIL}" ]] && git config --global user.email ${EMAIL}
 [[ ! -z "${USER_NAME}" ]] && git config --global user.name ${USER_NAME}
