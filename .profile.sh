@@ -46,6 +46,7 @@ function parse_git_branch(){
         local added="$(append_or_blank "A")"
         local modified="$(append_or_blank "M")"
         local untracked="$(append_or_blank "??")"
+        local tag="$(git describe --tags HEAD)"
         local rest="$(trim $(git status -s| grep -v "??"|grep -v "M"|grep -v "A" | wc -l))"
         if [[ ${rest} == 0 ]]
         then
@@ -61,6 +62,7 @@ function parse_git_branch(){
             staged="S ${staged}"
         fi
         local git_status="${GREY}[ ${PURPLE}${BRANCH}${GREY} ]"
+        [[ ! -z ${tag} ]] && git_status="${git_status} [${YELLOW}${tag}${GREY}] "
         git_status="${git_status} ( "
         [[ ! -z ${modified} ]] && git_status="${git_status}${YELLOW}${modified}${GREY}|"
         [[ ! -z ${added} ]] && git_status="${git_status}${LIGHT_BLUE}${added}${GREY}|"
