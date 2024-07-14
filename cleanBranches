@@ -13,15 +13,15 @@ if [ "$#" -ne 1 ]; then
 fi
 
 
-num="$[$(git branch --all --merged ${1}  | grep -v remotes/ | grep -v master | grep -v develop  | grep -v \* |wc -l)]"
+num="$[$(git branch --all --merged ${1}  | grep -v remotes/ | grep -v master | grep -v develop | grep -v staging | grep -v \* |wc -l)]"
 [[ $(echo ${num}) == 0 ]] && echo No Branches need cleaning. && exit 0
 
-git branch --all --merged ${1}  | grep -v remotes/ | grep -v master | grep -v develop | grep -v \*
+git branch --all --merged ${1}  | grep -v remotes/ | grep -v master | grep -v develop | grep -v staging | grep -v \*
 echo Delete all of these branches? \(Y/N\)
 read answer
 if [ "${answer}" == "Y" ]
 then
-    localBranches=$(git branch --all --merged ${1}  | grep -v remotes/ | grep -v master | grep -v develop | grep -v \*)
+    localBranches=$(git branch --all --merged ${1}  | grep -v remotes/ | grep -v master | grep -v develop | grep -v staging | grep -v \*)
     for i in ${localBranches}
     do
         git branch -d ${i}
