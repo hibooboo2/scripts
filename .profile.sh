@@ -46,7 +46,7 @@ function parse_git_branch(){
         local added="$(append_or_blank "A")"
         local modified="$(append_or_blank "M")"
         local untracked="$(append_or_blank "??")"
-        local tag="$(git describe --tags HEAD)"
+        local tag="$(git describe --tags HEAD 2>/dev/null)"
         local rest="$(trim $(git status -s| grep -v "??"|grep -v "M"|grep -v "A" | wc -l))"
         if [[ ${rest} == 0 ]]
         then
