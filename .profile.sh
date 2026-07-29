@@ -42,7 +42,7 @@ function append_or_blank() {
 }
 function parse_git_branch(){
     BRANCH=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
-    if [ ! "${BRANCH}" == "" ];then
+    if [ ! "${BRANCH}" == "" ] && [ "$(git rev-parse --is-bare-repository 2>/dev/null)" != "true" ];then
         local added="$(append_or_blank "A")"
         local modified="$(append_or_blank "M")"
         local untracked="$(append_or_blank "??")"
