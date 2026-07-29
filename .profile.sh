@@ -71,7 +71,7 @@ function parse_git_branch(){
         [[ ! -z ${staged} ]] && git_status="${git_status}${GREEN}${staged}"
         echo "${git_status%"${git_status##*[!\|]}"} ${GREY})${NONE}"
     else
-        echo ""
+        echo "${GREY}[ ${PURPLE}${BRANCH}${GREY} ]"
     fi
 }
 
