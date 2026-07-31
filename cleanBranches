@@ -27,6 +27,7 @@ then
     for i in ${localBranches}
     do
         git branch -d ${i}
+	git push origin --delete ${i}
     done
 else
     echo No branches deleted.
