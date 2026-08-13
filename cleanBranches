@@ -12,6 +12,8 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 
+git fetch --all
+
 
 localBranches=$(git branch --all --merged ${1}  | grep -v remotes/ | grep -v master | grep -v development | grep -v staging | grep -v production | grep -v \*)
 
@@ -26,8 +28,10 @@ if [ "${answer}" == "Y" ]
 then
     for i in ${localBranches}
     do
-        git branch -d ${i}
-	git push origin --delete ${i}
+    git branch -d ${i}
+    if git show-ref --t --verify --quiet refs/remotes/origin/${i}; then
+        git push origin --delete --no-verify ${i}
+    fi
     done
 else
     echo No branches deleted.

@@ -26,6 +26,10 @@ git config --global init.defaultBranch development
 git config --global push.autoSetupRemote true
 git config --global advice.skippedCherryPicks false
 
+git config --global alias.pdev "push -o merge_request.create -o merge_request.target=development origin HEAD"
+git config --global alias.pstg "push -o merge_request.create -o merge_request.target=staging origin HEAD"
+git config --global alias.pprod "push -o merge_request.create -o merge_request.target=production origin HEAD"
+
 [[ ! -z "${EMAIL}" ]] && git config --global user.email ${EMAIL}
 [[ ! -z "${USER_NAME}" ]] && git config --global user.name ${USER_NAME}
 exit 0
