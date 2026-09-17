@@ -26,9 +26,41 @@ git config --global init.defaultBranch development
 git config --global push.autoSetupRemote true
 git config --global advice.skippedCherryPicks false
 
-git config --global alias.pdev "push -o merge_request.create -o merge_request.target=development origin HEAD"
-git config --global alias.pstg "push -o merge_request.create -o merge_request.target=staging origin HEAD"
-git config --global alias.pprod "push -o merge_request.create -o merge_request.target=production origin HEAD"
+git config --global alias.pdev '!f() {
+  BRANCH=$(git branch --show-current);
+  TITLE=$(echo "$BRANCH" | tr "_" " ");
+  DESCRIPTION=$(git log --pretty=format:%s $(git merge-base HEAD origin/development 2>/dev/null || git merge-base HEAD development)..HEAD | paste -sd "; " -);
+  git push \
+    -o merge_request.create \
+    -o merge_request.target=development \
+    -o merge_request.title="Draft: $TITLE" \
+    -o merge_request.description="$DESCRIPTION" \
+    origin HEAD;
+}; f'
+
+git config --global alias.pstg '!f() {
+  BRANCH=$(git branch --show-current);
+  TITLE=$(echo "$BRANCH" | tr "_" " ");
+  DESCRIPTION=$(git log --pretty=format:%s $(git merge-base HEAD origin/development 2>/dev/null || git merge-base HEAD development)..HEAD | paste -sd "; " -);
+  git push \
+    -o merge_request.create \
+    -o merge_request.target=staging \
+    -o merge_request.title="Draft: $TITLE" \
+    -o merge_request.description="$DESCRIPTION" \
+    origin HEAD;
+}; f'
+
+git config --global alias.pprod '!f() {
+  BRANCH=$(git branch --show-current);
+  TITLE=$(echo "$BRANCH" | tr "_" " ");
+  DESCRIPTION=$(git log --pretty=format:%s $(git merge-base HEAD origin/development 2>/dev/null || git merge-base HEAD development)..HEAD | paste -sd "; " -);
+  git push \
+    -o merge_request.create \
+    -o merge_request.target=production \
+    -o merge_request.title="Draft: $TITLE" \
+    -o merge_request.description="$DESCRIPTION" \
+    origin HEAD;
+}; f'
 
 [[ ! -z "${EMAIL}" ]] && git config --global user.email ${EMAIL}
 [[ ! -z "${USER_NAME}" ]] && git config --global user.name ${USER_NAME}
