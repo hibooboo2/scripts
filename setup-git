@@ -30,7 +30,7 @@ git config --global alias.pdev '!f() {
   BRANCH=$(git branch --show-current);
   TITLE=$(echo "$BRANCH" | tr "_" " ");
   DESCRIPTION=$(git log --pretty=format:%s $(git merge-base HEAD origin/development 2>/dev/null || git merge-base HEAD development)..HEAD | paste -sd "; " -);
-  git push \
+  git push --no-verify \
     -o merge_request.create \
     -o merge_request.target=development \
     -o merge_request.title="Draft: $TITLE" \
@@ -41,8 +41,8 @@ git config --global alias.pdev '!f() {
 git config --global alias.pstg '!f() {
   BRANCH=$(git branch --show-current);
   TITLE=$(echo "$BRANCH" | tr "_" " ");
-  DESCRIPTION=$(git log --pretty=format:%s $(git merge-base HEAD origin/development 2>/dev/null || git merge-base HEAD development)..HEAD | paste -sd "; " -);
-  git push \
+  DESCRIPTION=$(git log --pretty=format:%s $(git merge-base HEAD origin/staging 2>/dev/null || git merge-base HEAD staging)..HEAD | paste -sd "; " -);
+  git push --no-verify \
     -o merge_request.create \
     -o merge_request.target=staging \
     -o merge_request.title="Draft: $TITLE" \
@@ -53,10 +53,22 @@ git config --global alias.pstg '!f() {
 git config --global alias.pprod '!f() {
   BRANCH=$(git branch --show-current);
   TITLE=$(echo "$BRANCH" | tr "_" " ");
-  DESCRIPTION=$(git log --pretty=format:%s $(git merge-base HEAD origin/development 2>/dev/null || git merge-base HEAD development)..HEAD | paste -sd "; " -);
-  git push \
+  DESCRIPTION=$(git log --pretty=format:%s $(git merge-base HEAD origin/production 2>/dev/null || git merge-base HEAD production)..HEAD | paste -sd "; " -);
+  git push --no-verify \
     -o merge_request.create \
     -o merge_request.target=production \
+    -o merge_request.title="Draft: $TITLE" \
+    -o merge_request.description="$DESCRIPTION" \
+    origin HEAD;
+}; f'
+
+git config --global alias.pmain '!f() {
+  BRANCH=$(git branch --show-current);
+  TITLE=$(echo "$BRANCH" | tr "_" " ");
+  DESCRIPTION=$(git log --pretty=format:%s $(git merge-base HEAD origin/main 2>/dev/null || git merge-base HEAD main)..HEAD | paste -sd "; " -);
+  git push --no-verify \
+    -o merge_request.create \
+    -o merge_request.target=main \
     -o merge_request.title="Draft: $TITLE" \
     -o merge_request.description="$DESCRIPTION" \
     origin HEAD;
